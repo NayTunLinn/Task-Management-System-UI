@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex PM - Project Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-app': 'var(--color-bg-app)',
+                        'bg-sidebar': 'var(--color-bg-sidebar)',
+                        'bg-surface': 'var(--color-bg-surface)',
+                        'bg-elevated': 'var(--color-bg-elevated)',
+                        'bg-muted': 'var(--color-bg-muted)',
+                        'border-default': 'var(--color-border-default)',
+                        'border-subtle': 'var(--color-border-subtle)',
+                        'text-primary': 'var(--color-text-primary)',
+                        'text-secondary': 'var(--color-text-secondary)',
+                        'text-muted': 'var(--color-text-muted)',
+                        'accent': 'var(--color-accent)',
+                        'accent-hover': 'var(--color-accent-hover)',
+                        'danger': 'var(--color-danger)',
+                        'warning': 'var(--color-warning)',
+                        'success': 'var(--color-success)',
+                        'info': 'var(--color-info)'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif']
+                    },
+                    spacing: {
+                        '1': '1px', '2': '4px', '3': '6px', '4': '8px', 
+                        '5': '12px', '6': '16px', '7': '24px', '8': '32px'
+                    },
+                    borderRadius: {
+                        'xs': '2px', 'sm': '4px', 'md': '6px', 
+                        'lg': '8px', 'xl': '14px', '2xl': '16px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Dark Theme Variables (Default) */
+        :root, .dark {
+            --color-bg-app: #000000;
+            --color-bg-sidebar: #1d1f21;
+            --color-bg-surface: #1d1f21;
+            --color-bg-elevated: #252729;
+            --color-bg-muted: #2b2d30;
+            --color-border-default: #404244;
+            --color-border-subtle: #2f3133;
+            --color-text-primary: #f2f3f4;
+            --color-text-secondary: #9ea0a2;
+            --color-text-muted: #7b7d80;
+            --color-accent: #789fe8;
+            --color-accent-hover: #8fb0f0;
+            --color-danger: #ef4444;
+            --color-warning: #f59e0b;
+            --color-success: #22c55e;
+            --color-info: #3b82f6;
+        }
+
+        /* Light Theme Variables */
+        .light {
+            --color-bg-app: #f4f5f7;
+            --color-bg-sidebar: #ffffff;
+            --color-bg-surface: #ffffff;
+            --color-bg-elevated: #f9fafb;
+            --color-bg-muted: #f1f3f5;
+            --color-border-default: #d1d5db;
+            --color-border-subtle: #e5e7eb;
+            --color-text-primary: #111827;
+            --color-text-secondary: #4b5563;
+            --color-text-muted: #6b7280;
+            --color-accent: #2563eb;
+            --color-accent-hover: #1d4ed8;
+            --color-danger: #dc2626;
+            --color-warning: #d97706;
+            --color-success: #16a34a;
+            --color-info: #2563eb;
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: var(--color-bg-app); color: var(--color-text-primary); transition: background-color 0.2s ease, color 0.2s ease; }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+        /* Focus Visible Styling for Accessibility */
+        *:focus-visible {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Donut Chart CSS */
+        .donut-chart {
+            background: conic-gradient(
+                var(--color-success) 0% 45%,
+                var(--color-info) 45% 70%,
+                var(--color-warning) 70% 85%,
+                var(--color-danger) 85% 95%,
+                var(--color-text-muted) 95% 100%
+            );
+        }
+
+        .transition-base { transition: all 150ms cubic-bezier(0.2, 0, 0, 1); }
+        .transition-slow { transition: transform 300ms cubic-bezier(0.2, 0, 0, 1), opacity 300ms ease; }
+        
+        .view { display: none; }
+        .view.active { display: block; }
+        
+        .drawer { transform: translateX(100%); }
+        .drawer.open { transform: translateX(0); }
+        
+        .overlay { opacity: 0; pointer-events: none; }
+        .overlay.open { opacity: 1; pointer-events: auto; }
+
+        /* Modal Styling */
+        .modal-overlay { opacity: 0; pointer-events: none; transition: opacity 200ms ease; }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal-content { transform: scale(0.95); transition: transform 200ms ease; }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+
+        /* Toast Styling */
+        .toast { transform: translateX(120%); transition: transform 300ms cubic-bezier(0.2, 0, 0, 1); }
+        .toast.show { transform: translateX(0); }
+
+        /* Custom Badge Classes for Theme Compatibility */
+        .badge { display: inline-flex; align-items: center; padding: 0.125rem 0.375rem; font-size: 10px; border-radius: 4px; border: 1px solid transparent; line-height: 1; font-weight: 500; }
+        .badge-info { background-color: rgba(59, 130, 246, 0.15); color: var(--color-info); border-color: rgba(59, 130, 246, 0.3); }
+        .badge-success { background-color: rgba(34, 197, 94, 0.15); color: var(--color-success); border-color: rgba(34, 197, 94, 0.3); }
+        .badge-warning { background-color: rgba(245, 158, 11, 0.15); color: var(--color-warning); border-color: rgba(245, 158, 11, 0.3); }
+        .badge-danger { background-color: rgba(239, 68, 68, 0.15); color: var(--color-danger); border-color: rgba(239, 68, 68, 0.3); }
+        .badge-muted { background-color: rgba(107, 114, 128, 0.15); color: var(--color-text-secondary); border-color: rgba(107, 114, 128, 0.3); }
+        .badge-accent { background-color: rgba(37, 99, 235, 0.15); color: var(--color-accent); border-color: rgba(37, 99, 235, 0.3); }
+        
+        /* Checkbox styling for themes */
+        input[type="checkbox"] {
+            background-color: var(--color-bg-app);
+            border-color: var(--color-border-default);
+            border-radius: 4px;
+        }
+        input[type="checkbox"]:checked {
+            background-color: var(--color-accent);
+            border-color: var(--color-accent);
+        }
+        /* Select native option styling for dark mode */
+        option { background-color: var(--color-bg-surface); color: var(--color-text-primary); }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- App Shell -->
+    <div class="flex w-full h-full">
+        
+        <!-- Sidebar -->
+        <aside class="w-60 bg-bg-sidebar border-r border-subtle flex flex-col flex-shrink-0">
+            <!-- Logo Section -->
+            <div class="h-12 flex items-center px-5 border-b border-subtle">
+                <div class="flex items-center space-x-2">
+                    <div class="w-6 h-6 rounded-md bg-accent flex items-center justify-center">
+                        <i class="fa-solid fa-cube text-xs text-white"></i>
+                    </div>
+                    <span class="font-semibold text-sm text-text-primary">Codex PM</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 py-4 overflow-y-auto">
+                <div class="px-3 space-y-1">
+                    <a href="#" data-route="dashboard" class="nav-item flex items-center space-x-3 px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base relative">
+                        <i class="fa-solid fa-gauge-high text-xs w-4"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" data-route="departments" class="nav-item flex items-center space-x-3 px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base relative">
+                        <i class="fa-solid fa-building text-xs w-4"></i>
+                        <span>Departments</span>
+                    </a>
+                    <a href="#" data-route="projects" class="nav-item flex items-center space-x-3 px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base relative">
+                        <i class="fa-solid fa-folder text-xs w-4"></i>
+                        <span>Projects</span>
+                    </a>
+                    <a href="#" data-route="tasks" class="nav-item flex items-center space-x-3 px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base relative">
+                        <i class="fa-solid fa-list-check text-xs w-4"></i>
+                        <span>Tasks</span>
+                    </a>
+                    <a href="#" data-route="users" class="nav-item flex items-center space-x-3 px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base relative">
+                        <i class="fa-solid fa-users text-xs w-4"></i>
+                        <span>Users</span>
+                    </a>
+                    <a href="#" data-route="reports" class="nav-item flex items-center space-x-3 px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base relative">
+                        <i class="fa-solid fa-chart-pie text-xs w-4"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+
+                <div class="mt-6 px-5">
+                    <h3 class="text-xs text-text-muted uppercase tracking-wider mb-2">Projects</h3>
+                </div>
+                <div class="px-3 space-y-1">
+                    <a href="#" data-route="project-detail" class="nav-item flex items-center justify-between px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base group relative">
+                        <div class="flex items-center min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-info mr-2.5 flex-shrink-0"></span>
+                            <span class="truncate">Mobile App Redesign</span>
+                        </div>
+                    </a>
+                    <a href="#" data-route="projects" class="nav-item flex items-center justify-between px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base group relative">
+                        <div class="flex items-center min-w-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-warning mr-2.5 flex-shrink-0"></span>
+                            <span class="truncate">Website Launch</span>
+                        </div>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Settings & User -->
+            <div class="p-3 border-t border-subtle">
+                <a href="#" data-route="settings" class="nav-item flex items-center space-x-3 px-3 py-1.5 rounded-md text-sm text-text-secondary hover:bg-bg-elevated hover:text-text-primary transition-base mb-2 relative">
+                    <i class="fa-solid fa-gear text-xs w-4"></i>
+                    <span>Settings</span>
+                </a>
+                <div class="flex items-center space-x-2 px-2 py-1 rounded-md hover:bg-bg-elevated cursor-pointer transition-base">
+                    <img src="https://i.pravatar.cc/40?img=12" alt="User Avatar" class="w-7 h-7 rounded-full">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-medium text-text-primary truncate">Alex Morgan</p>
+                        <p class="text-[10px] text-text-muted truncate">Super Admin</p>
+                    </div>
+                    <i class="fa-solid fa-ellipsis-vertical text-xs text-text-muted"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            
+            <!-- Top Bar -->
+            <header class="h-12 bg-bg-app border-b border-subtle flex items-center justify-between px-6 flex-shrink-0">
+                <!-- Search -->
+                <div class="relative w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
+                    <input type="text" placeholder="Search..." class="w-full h-7 bg-bg-muted border border-subtle rounded-sm pl-8 pr-12 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none transition-base">
+                    <kbd class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-text-muted border border-subtle rounded px-1 py-0.5">/</kbd>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center space-x-3 relative">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="Toggle theme">
+                        <i class="fa-solid fa-sun text-xs"></i>
+                    </button>
+
+                    <div class="relative group">
+                        <button class="h-7 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-sm flex items-center space-x-1.5 transition-base">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                            <span>Create</span>
+                        </button>
+                        <div class="absolute right-0 top-9 w-48 bg-bg-surface border border-border-default rounded-md shadow-xl py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+                            <a href="#" onclick="openCreateTaskModal()" class="flex items-center px-3 py-1.5 text-xs text-text-primary hover:bg-bg-muted transition-base"><i class="fa-solid fa-list-check w-4 text-text-secondary text-[10px]"></i><span>New Task</span></a>
+                            <a href="#" class="flex items-center px-3 py-1.5 text-xs text-text-primary hover:bg-bg-muted transition-base"><i class="fa-solid fa-folder w-4 text-text-secondary text-[10px]"></i><span>New Project</span></a>
+                            <a href="#" class="flex items-center px-3 py-1.5 text-xs text-text-primary hover:bg-bg-muted transition-base"><i class="fa-solid fa-building w-4 text-text-secondary text-[10px]"></i><span>New Department</span></a>
+                            <div class="border-t border-subtle my-1"></div>
+                            <a href="#" class="flex items-center px-3 py-1.5 text-xs text-text-primary hover:bg-bg-muted transition-base"><i class="fa-solid fa-user-plus w-4 text-text-secondary text-[10px]"></i><span>Invite User</span></a>
+                        </div>
+                    </div>
+                    <button id="bell-btn" class="relative w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="Notifications">
+                        <i class="fa-solid fa-bell text-xs"></i>
+                        <span id="notif-dot" class="absolute top-1 right-1 w-1.5 h-1.5 bg-danger rounded-full hidden"></span>
+                    </button>
+                    <button class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="Help">
+                        <i class="fa-solid fa-question text-xs"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Scrollable Content -->
+            <main id="main-content" class="flex-1 overflow-y-auto">
+                
+                <!-- 1. DASHBOARD VIEW -->
+                <div id="view-dashboard" class="view active p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-xl font-semibold text-text-primary leading-tight">Dashboard</h1>
+                            <p class="text-sm text-text-secondary mt-0.5">Organization-wide overview of projects, tasks, and team performance.</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="showToast('Generating CSV report...', 'info')" class="h-8 px-3 bg-bg-surface border border-border-default hover:bg-bg-elevated text-text-primary text-xs font-medium rounded-md flex items-center space-x-1.5 transition-base">
+                                <i class="fa-solid fa-download text-[10px]"></i><span>Export Report</span>
+                            </button>
+                            <button onclick="openCreateTaskModal()" class="h-8 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md flex items-center space-x-1.5 transition-base">
+                                <i class="fa-solid fa-plus text-[10px]"></i><span>Add Task</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Total Projects</span>
+                                <div class="w-6 h-6 rounded-md bg-bg-muted flex items-center justify-center"><i class="fa-solid fa-folder text-[10px] text-info"></i></div>
+                            </div>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-semibold text-text-primary">24</span>
+                                <span class="text-xs text-success font-medium flex items-center"><i class="fa-solid fa-arrow-up text-[8px] mr-0.5"></i> 12%</span>
+                            </div>
+                            <p class="text-[10px] text-text-muted mt-1">vs last month</p>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Active Tasks</span>
+                                <div class="w-6 h-6 rounded-md bg-bg-muted flex items-center justify-center"><i class="fa-solid fa-list-check text-[10px] text-accent"></i></div>
+                            </div>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-semibold text-text-primary" id="kpi-active-tasks">3</span>
+                                <span class="text-xs text-text-muted font-medium">Open</span>
+                            </div>
+                            <div class="w-full h-1 bg-bg-muted rounded-full mt-2 overflow-hidden"><div class="h-full bg-accent rounded-full" style="width: 65%;"></div></div>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Overdue</span>
+                                <div class="w-6 h-6 rounded-md bg-bg-muted flex items-center justify-center"><i class="fa-solid fa-clock text-[10px] text-danger"></i></div>
+                            </div>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-semibold text-text-primary">12</span>
+                                <span class="text-xs text-danger font-medium flex items-center"><i class="fa-solid fa-arrow-up text-[8px] mr-0.5"></i> 4%</span>
+                            </div>
+                            <p class="text-[10px] text-text-muted mt-1">Requires immediate action</p>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Blocked</span>
+                                <div class="w-6 h-6 rounded-md bg-bg-muted flex items-center justify-center"><i class="fa-solid fa-ban text-[10px] text-warning"></i></div>
+                            </div>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-semibold text-text-primary">4</span>
+                                <span class="text-xs text-text-muted font-medium">Tasks</span>
+                            </div>
+                            <p class="text-[10px] text-text-muted mt-1">Awaiting dependencies</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-5">
+                            <h3 class="text-sm font-semibold text-text-primary mb-4">Task Status Distribution</h3>
+                            <div class="flex items-center justify-center space-x-6">
+                                <div class="relative w-32 h-32 flex-shrink-0">
+                                    <div class="w-full h-full rounded-full donut-chart"></div>
+                                    <div class="absolute inset-3 bg-bg-surface rounded-full flex flex-col items-center justify-center">
+                                        <span class="text-xl font-semibold text-text-primary">145</span>
+                                        <span class="text-[10px] text-text-muted uppercase tracking-wide">Total</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-2 flex-1">
+                                    <div class="flex items-center justify-between text-xs"><div class="flex items-center"><span class="w-2 h-2 rounded-sm bg-success mr-2"></span><span class="text-text-secondary">Completed</span></div><span class="text-text-primary font-medium">65</span></div>
+                                    <div class="flex items-center justify-between text-xs"><div class="flex items-center"><span class="w-2 h-2 rounded-sm bg-info mr-2"></span><span class="text-text-secondary">In Progress</span></div><span class="text-text-primary font-medium">36</span></div>
+                                    <div class="flex items-center justify-between text-xs"><div class="flex items-center"><span class="w-2 h-2 rounded-sm bg-warning mr-2"></span><span class="text-text-secondary">Todo</span></div><span class="text-text-primary font-medium">22</span></div>
+                                    <div class="flex items-center justify-between text-xs"><div class="flex items-center"><span class="w-2 h-2 rounded-sm bg-danger mr-2"></span><span class="text-text-secondary">Overdue</span></div><span class="text-text-primary font-medium">12</span></div>
+                                    <div class="flex items-center justify-between text-xs"><div class="flex items-center"><span class="w-2 h-2 rounded-sm bg-text-muted mr-2"></span><span class="text-text-secondary">Cancelled</span></div><span class="text-text-primary font-medium">10</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-5 col-span-2">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-sm font-semibold text-text-primary">Task Completion Trend</h3>
+                                <div class="flex space-x-1">
+                                    <button class="text-[10px] px-2 py-1 rounded-sm text-text-secondary hover:bg-bg-muted transition-base">Week</button>
+                                    <button class="text-[10px] px-2 py-1 rounded-sm bg-bg-muted text-text-primary font-medium">Month</button>
+                                    <button class="text-[10px] px-2 py-1 rounded-sm text-text-secondary hover:bg-bg-muted transition-base">Quarter</button>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-between h-32 space-x-2 pt-2">
+                                <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">22</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-success" style="height: 60%;"></div></div><span class="text-[10px] text-text-muted">W1</span></div>
+                                <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">35</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-success" style="height: 85%;"></div></div><span class="text-[10px] text-text-muted">W2</span></div>
+                                <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">18</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-success" style="height: 45%;"></div></div><span class="text-[10px] text-text-muted">W3</span></div>
+                                <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">45</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-success" style="height: 95%;"></div></div><span class="text-[10px] text-text-muted">W4</span></div>
+                                <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">28</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-accent" style="height: 65%;"></div></div><span class="text-[10px] text-text-muted">W5</span></div>
+                                <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">32</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-accent" style="height: 75%;"></div></div><span class="text-[10px] text-text-muted">W6</span></div>
+                                <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">15</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-accent" style="height: 35%;"></div></div><span class="text-[10px] text-text-muted">W7</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-bg-surface border border-subtle rounded-lg col-span-2 overflow-hidden">
+                            <div class="px-5 py-3 border-b border-subtle flex justify-between items-center">
+                                <h3 class="text-sm font-semibold text-text-primary">Project Health Report</h3>
+                                <a href="#" data-route="reports" class="text-xs text-accent hover:underline">View all</a>
+                            </div>
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-subtle">
+                                        <th class="py-2 px-5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Project</th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Owner</th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Status</th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Progress</th>
+                                        <th class="py-2 px-5 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Health</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-xs divide-y divide-subtle">
+                                    <tr class="hover:bg-bg-elevated transition-base">
+                                        <td class="py-2.5 px-5 text-text-primary font-medium">Mobile App Redesign</td>
+                                        <td class="py-2.5 px-2 text-text-secondary">Sarah J.</td>
+                                        <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
+                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div><span class="text-text-muted text-[10px]">85%</span></div></td>
+                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-success">On Track</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-bg-elevated transition-base">
+                                        <td class="py-2.5 px-5 text-text-primary font-medium">Website Launch</td>
+                                        <td class="py-2.5 px-2 text-text-secondary">Mark T.</td>
+                                        <td class="py-2.5 px-2"><span class="badge badge-warning">On Hold</span></td>
+                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 45%;"></div></div><span class="text-text-muted text-[10px]">45%</span></div></td>
+                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-warning">At Risk</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-bg-elevated transition-base">
+                                        <td class="py-2.5 px-5 text-text-primary font-medium">API Migration v2</td>
+                                        <td class="py-2.5 px-2 text-text-secondary">Alex K.</td>
+                                        <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
+                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 20%;"></div></div><span class="text-text-muted text-[10px]">20%</span></div></td>
+                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-danger">Delayed</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-5">
+                            <h3 class="text-sm font-semibold text-text-primary mb-4">Team Workload</h3>
+                            <div class="space-y-4">
+                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=5" class="w-4 h-4 rounded-full" alt="Sarah"><span class="text-xs text-text-primary font-medium">Sarah J.</span></div><span class="text-[10px] text-text-muted">8 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-success" style="width: 50%;"></div><div class="h-full bg-info" style="width: 25%;"></div><div class="h-full bg-warning" style="width: 25%;"></div></div></div>
+                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=8" class="w-4 h-4 rounded-full" alt="Mark"><span class="text-xs text-text-primary font-medium">Mark T.</span></div><span class="text-[10px] text-text-muted">12 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-danger" style="width: 40%;"></div><div class="h-full bg-warning" style="width: 30%;"></div><div class="h-full bg-info" style="width: 15%;"></div></div></div>
+                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=3" class="w-4 h-4 rounded-full" alt="Alex"><span class="text-xs text-text-primary font-medium">Alex K.</span></div><span class="text-[10px] text-text-muted">5 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-info" style="width: 60%;"></div><div class="h-full bg-success" style="width: 20%;"></div></div></div>
+                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=16" class="w-4 h-4 rounded-full" alt="Nina"><span class="text-xs text-text-primary font-medium">Nina P.</span></div><span class="text-[10px] text-text-muted">3 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-success" style="width: 80%;"></div><div class="h-full bg-info" style="width: 10%;"></div></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DEPARTMENTS VIEW -->
+                <div id="view-departments" class="view p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-xl font-semibold text-text-primary leading-tight">Departments</h1>
+                            <p class="text-sm text-text-secondary mt-0.5">Manage organizational departments and teams.</p>
+                        </div>
+                        <button onclick="showToast('Create Department modal would open', 'info')" class="h-8 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md flex items-center space-x-1.5 transition-base">
+                            <i class="fa-solid fa-plus text-[10px]"></i><span>Create Department</span>
+                        </button>
+                    </div>
+                    <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
+                        <div class="p-4 border-b border-subtle flex items-center space-x-4">
+                            <div class="relative flex-1 max-w-xs">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
+                                <input type="text" placeholder="Search departments..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
+                            </div>
+                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                <option>All Statuses</option>
+                                <option>Active</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-subtle">
+                                    <th class="py-2 px-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Department</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Code</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Manager</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Members</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Projects</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Status</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Updated</th>
+                                    <th class="py-2 px-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs divide-y divide-subtle">
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4 text-text-primary font-medium">Engineering</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">ENG</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Alex Morgan</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">24</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">4</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
+                                    <td class="py-2.5 px-2 text-text-muted">2 days ago</td>
+                                    <td class="py-2.5 px-4 text-right">
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4 text-text-primary font-medium">Design</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">DSN</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Sarah Johnson</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">8</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">2</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
+                                    <td class="py-2.5 px-2 text-text-muted">5 days ago</td>
+                                    <td class="py-2.5 px-4 text-right">
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4 text-text-primary font-medium">Marketing</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">MKT</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Nina Parker</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">12</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">3</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-muted">Inactive</span></td>
+                                    <td class="py-2.5 px-2 text-text-muted">1 month ago</td>
+                                    <td class="py-2.5 px-4 text-right">
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. PROJECTS VIEW -->
+                <div id="view-projects" class="view p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-xl font-semibold text-text-primary leading-tight">Projects</h1>
+                            <p class="text-sm text-text-secondary mt-0.5">Track and manage all organizational projects.</p>
+                        </div>
+                        <button onclick="showToast('Create Project modal would open', 'info')" class="h-8 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md flex items-center space-x-1.5 transition-base">
+                            <i class="fa-solid fa-plus text-[10px]"></i><span>Create Project</span>
+                        </button>
+                    </div>
+                    <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
+                        <div class="p-4 border-b border-subtle flex items-center space-x-4">
+                            <div class="relative flex-1 max-w-xs">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
+                                <input type="text" placeholder="Search projects..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
+                            </div>
+                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                <option>All Departments</option>
+                                <option>Engineering</option>
+                                <option>Design</option>
+                            </select>
+                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                <option>All Statuses</option>
+                                <option>Active</option>
+                                <option>Completed</option>
+                            </select>
+                        </div>
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-subtle">
+                                    <th class="py-2 px-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Project</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Department</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Owner</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Status</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Priority</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Progress</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Due Date</th>
+                                    <th class="py-2 px-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs divide-y divide-subtle">
+                                <tr class="hover:bg-bg-elevated transition-base cursor-pointer" onclick="navigate('project-detail')">
+                                    <td class="py-2.5 px-4 text-text-primary font-medium flex items-center space-x-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-info"></span>
+                                        <span>Mobile App Redesign</span>
+                                    </td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Design</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Sarah J.</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-danger">Urgent</span></td>
+                                    <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div><span class="text-text-muted text-[10px]">85%</span></div></td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Oct 24, 2023</td>
+                                    <td class="py-2.5 px-4 text-right">
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-ellipsis text-[10px]"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4 text-text-primary font-medium flex items-center space-x-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
+                                        <span>Website Launch</span>
+                                    </td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Marketing</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Mark T.</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-warning">On Hold</span></td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-warning">Medium</span></td>
+                                    <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 45%;"></div></div><span class="text-text-muted text-[10px]">45%</span></div></td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Nov 15, 2023</td>
+                                    <td class="py-2.5 px-4 text-right">
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-ellipsis text-[10px]"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4 text-text-primary font-medium flex items-center space-x-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-danger"></span>
+                                        <span>API Migration v2</span>
+                                    </td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Engineering</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Alex K.</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-info">Low</span></td>
+                                    <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 20%;"></div></div><span class="text-text-muted text-[10px]">20%</span></div></td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Dec 01, 2023</td>
+                                    <td class="py-2.5 px-4 text-right">
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-ellipsis text-[10px]"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. PROJECT DETAIL VIEW -->
+                <div id="view-project-detail" class="view p-6">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <div class="flex items-center space-x-2 text-xs text-text-muted mb-1">
+                                <a href="#" data-route="projects" class="hover:text-text-primary">Projects</a>
+                                <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                                <span class="text-text-secondary">Mobile App Redesign</span>
+                            </div>
+                            <h1 class="text-xl font-semibold text-text-primary leading-tight">Mobile App Redesign</h1>
+                            <div class="flex items-center space-x-3 mt-2">
+                                <span class="badge badge-info">Active</span>
+                                <span class="badge badge-danger">Urgent</span>
+                                <span class="text-xs text-text-secondary">Owner: Sarah J.</span>
+                                <span class="text-xs text-text-secondary">Due: Oct 24, 2023</span>
+                                <div class="flex items-center space-x-1">
+                                    <div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div>
+                                    <span class="text-xs text-text-muted">85%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="h-8 px-3 bg-bg-surface border border-border-default hover:bg-bg-elevated text-text-primary text-xs font-medium rounded-md flex items-center space-x-1.5 transition-base">
+                                <i class="fa-solid fa-user-plus text-[10px]"></i><span>Share</span>
+                            </button>
+                            <button onclick="openCreateTaskModal()" class="h-8 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md flex items-center space-x-1.5 transition-base">
+                                <i class="fa-solid fa-plus text-[10px]"></i><span>Add Task</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="border-b border-subtle mb-4">
+                        <nav class="flex space-x-4">
+                            <button class="proj-tab active py-2 text-xs font-medium text-text-primary border-b-2 border-accent" data-tab="list">List</button>
+                            <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="board">Board</button>
+                            <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="timeline">Timeline</button>
+                            <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="calendar">Calendar</button>
+                            <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="dashboard">Dashboard</button>
+                            <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="members">Members</button>
+                        </nav>
+                    </div>
+
+                    <!-- List Tab Content -->
+                    <div id="proj-tab-list" class="proj-tab-content">
+                        <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
+                            <div class="p-4 border-b border-subtle flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative w-64">
+                                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
+                                        <input type="text" placeholder="Search tasks..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
+                                    </div>
+                                    <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                        <option>All Assignees</option>
+                                    </select>
+                                    <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                        <option>All Statuses</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="h-7 px-2 bg-bg-app border border-subtle hover:bg-bg-elevated text-text-secondary text-[10px] rounded-sm flex items-center space-x-1 transition-base">
+                                        <i class="fa-solid fa-filter text-[8px]"></i><span>Filter</span>
+                                    </button>
+                                    <button class="h-7 px-2 bg-bg-app border border-subtle hover:bg-bg-elevated text-text-secondary text-[10px] rounded-sm flex items-center space-x-1 transition-base">
+                                        <i class="fa-solid fa-arrow-down-wide-short text-[8px]"></i><span>Sort</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-subtle">
+                                        <th class="py-2 pl-4 pr-2 w-6"><input type="checkbox" class="rounded"></th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Task</th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Assignee</th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Status</th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Priority</th>
+                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Due Date</th>
+                                        <th class="py-2 pr-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="project-tasks-body" class="text-xs divide-y divide-subtle">
+                                    <!-- Dynamic tasks will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Board Tab Content -->
+                    <div id="proj-tab-board" class="proj-tab-content hidden">
+                        <div class="flex space-x-4 overflow-x-auto pb-4">
+                            <!-- Todo Column -->
+                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-220px)]">
+                                <div class="p-3 border-b border-subtle flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 rounded-full bg-text-muted"></span>
+                                        <h3 class="text-xs font-semibold text-text-primary">Todo</h3>
+                                        <span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">4</span>
+                                    </div>
+                                    <button class="text-text-muted hover:text-text-primary"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                </div>
+                                <div class="p-2 space-y-2 overflow-y-auto">
+                                    <div class="bg-bg-elevated border border-subtle rounded-md p-3 cursor-pointer hover:border-border-default transition-base" onclick="openTaskDrawer()">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="badge badge-info">Low</span>
+                                            <span class="text-[9px] text-text-muted">P-104</span>
+                                        </div>
+                                        <p class="text-xs text-text-primary font-medium mb-2">Set up CI/CD pipeline</p>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-1 text-[10px] text-text-muted">
+                                                <i class="fa-regular fa-clock"></i><span>Oct 25</span>
+                                            </div>
+                                            <img src="https://i.pravatar.cc/20?img=8" class="w-5 h-5 rounded-full" alt="Mark">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- In Progress Column -->
+                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-220px)]">
+                                <div class="p-3 border-b border-subtle flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 rounded-full bg-info"></span>
+                                        <h3 class="text-xs font-semibold text-text-primary">In Progress</h3>
+                                        <span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">2</span>
+                                    </div>
+                                    <button class="text-text-muted hover:text-text-primary"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                </div>
+                                <div class="p-2 space-y-2 overflow-y-auto">
+                                    <div class="bg-bg-elevated border border-subtle rounded-md p-3 cursor-pointer hover:border-border-default transition-base" onclick="openTaskDrawer()">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="badge badge-danger">Urgent</span>
+                                            <span class="text-[9px] text-text-muted">P-101</span>
+                                        </div>
+                                        <p class="text-xs text-text-primary font-medium mb-2">Implement authentication flow</p>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-1 text-[10px] text-text-muted">
+                                                <i class="fa-regular fa-clock"></i><span>Oct 20</span>
+                                            </div>
+                                            <img src="https://i.pravatar.cc/20?img=3" class="w-5 h-5 rounded-full" alt="Alex">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Completed Column -->
+                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-220px)]">
+                                <div class="p-3 border-b border-subtle flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 rounded-full bg-success"></span>
+                                        <h3 class="text-xs font-semibold text-text-primary">Completed</h3>
+                                        <span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">1</span>
+                                    </div>
+                                    <button class="text-text-muted hover:text-text-primary"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                </div>
+                                <div class="p-2 space-y-2 overflow-y-auto">
+                                    <div class="bg-bg-elevated border border-subtle rounded-md p-3 cursor-pointer hover:border-border-default transition-base opacity-70" onclick="openTaskDrawer()">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="badge badge-warning">Medium</span>
+                                            <span class="text-[9px] text-text-muted">P-100</span>
+                                        </div>
+                                        <p class="text-xs text-text-primary font-medium mb-2 line-through">Design dashboard UI components</p>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-1 text-[10px] text-text-muted">
+                                                <i class="fa-regular fa-clock"></i><span>Oct 18</span>
+                                            </div>
+                                            <img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full" alt="Sarah">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. TASKS VIEW (Dynamic) -->
+                <div id="view-tasks" class="view p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-xl font-semibold text-text-primary leading-tight">Tasks</h1>
+                            <p class="text-sm text-text-secondary mt-0.5">All tasks across all projects.</p>
+                        </div>
+                        <button onclick="openCreateTaskModal()" class="h-8 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md flex items-center space-x-1.5 transition-base">
+                            <i class="fa-solid fa-plus text-[10px]"></i><span>Create Task</span>
+                        </button>
+                    </div>
+                    <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
+                        <div class="p-4 border-b border-subtle flex items-center space-x-4">
+                            <div class="relative flex-1 max-w-xs">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
+                                <input type="text" id="task-search" oninput="renderTasks()" placeholder="Search tasks..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
+                            </div>
+                            <select id="task-filter-project" onchange="renderTasks()" class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                <option value="">All Projects</option>
+                                <option>Mobile App Redesign</option>
+                                <option>API Migration v2</option>
+                                <option>Website Launch</option>
+                            </select>
+                            <select id="task-filter-status" onchange="renderTasks()" class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                <option value="">All Statuses</option>
+                                <option value="To Do">To Do</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Blocked">Blocked</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-subtle">
+                                    <th class="py-2 pl-4 pr-2 w-6"><input type="checkbox" class="rounded"></th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Task</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Project</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Assignee</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Status</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Priority</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Due Date</th>
+                                    <th class="py-2 pr-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="global-tasks-body" class="text-xs divide-y divide-subtle">
+                                <!-- Dynamic tasks injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 6. USERS VIEW -->
+                <div id="view-users" class="view p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-xl font-semibold text-text-primary leading-tight">Users</h1>
+                            <p class="text-sm text-text-secondary mt-0.5">Manage user accounts, roles, and permissions.</p>
+                        </div>
+                        <button onclick="showToast('Invite User modal would open', 'info')" class="h-8 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md flex items-center space-x-1.5 transition-base">
+                            <i class="fa-solid fa-user-plus text-[10px]"></i><span>Invite User</span>
+                        </button>
+                    </div>
+                    <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
+                        <div class="p-4 border-b border-subtle flex items-center space-x-4">
+                            <div class="relative flex-1 max-w-xs">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
+                                <input type="text" placeholder="Search users..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
+                            </div>
+                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                <option>All Departments</option>
+                            </select>
+                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                                <option>All Roles</option>
+                            </select>
+                        </div>
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-subtle">
+                                    <th class="py-2 px-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted">User</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Email</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Department</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Role</th>
+                                    <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Status</th>
+                                    <th class="py-2 px-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs divide-y divide-subtle">
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=12" class="w-5 h-5 rounded-full" alt="Alex"><span class="text-text-primary font-medium">Alex Morgan</span></div></td>
+                                    <td class="py-2.5 px-2 text-text-secondary">alex.morgan@codex.io</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Engineering</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-accent">Super Admin</span></td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
+                                    <td class="py-2.5 px-4 text-right"><button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button><button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button></td>
+                                </tr>
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full" alt="Sarah"><span class="text-text-primary font-medium">Sarah Johnson</span></div></td>
+                                    <td class="py-2.5 px-2 text-text-secondary">sarah.j@codex.io</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Design</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-info">Admin</span></td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
+                                    <td class="py-2.5 px-4 text-right"><button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button><button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button></td>
+                                </tr>
+                                <tr class="hover:bg-bg-elevated transition-base">
+                                    <td class="py-2.5 px-4"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=8" class="w-5 h-5 rounded-full" alt="Mark"><span class="text-text-primary font-medium">Mark Thompson</span></div></td>
+                                    <td class="py-2.5 px-2 text-text-secondary">mark.t@codex.io</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Marketing</td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-muted">Member</span></td>
+                                    <td class="py-2.5 px-2"><span class="badge badge-warning">Invited</span></td>
+                                    <td class="py-2.5 px-4 text-right"><button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button><button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 7. REPORTS VIEW -->
+                <div id="view-reports" class="view p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-xl font-semibold text-text-primary leading-tight">Reports</h1>
+                            <p class="text-sm text-text-secondary mt-0.5">Organization-wide analytics and insights.</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <select class="h-8 px-3 bg-bg-surface border border-border-default hover:bg-bg-elevated text-text-secondary text-xs font-medium rounded-md flex items-center transition-base">
+                                <option>Last 30 Days</option>
+                                <option>Last Quarter</option>
+                                <option>Last Year</option>
+                            </select>
+                            <button onclick="showToast('Report exported successfully!', 'success')" class="h-8 px-3 bg-bg-surface border border-border-default hover:bg-bg-elevated text-text-primary text-xs font-medium rounded-md flex items-center space-x-1.5 transition-base">
+                                <i class="fa-solid fa-download text-[10px]"></i><span>Export CSV</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Total Projects</span>
+                            <div class="text-2xl font-semibold text-text-primary mt-2">24</div>
+                            <div class="text-[10px] text-text-muted mt-1">4 active this month</div>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Total Tasks</span>
+                            <div class="text-2xl font-semibold text-text-primary mt-2">412</div>
+                            <div class="text-[10px] text-text-muted mt-1">+45 vs last month</div>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Completion Rate</span>
+                            <div class="text-2xl font-semibold text-text-primary mt-2">78%</div>
+                            <div class="text-[10px] text-success mt-1 flex items-center"><i class="fa-solid fa-arrow-up text-[8px] mr-0.5"></i> 5% improvement</div>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-4">
+                            <span class="text-xs text-text-secondary font-medium uppercase tracking-wider">Avg Cycle Time</span>
+                            <div class="text-2xl font-semibold text-text-primary mt-2">4.2d</div>
+                            <div class="text-[10px] text-text-muted mt-1">From Todo to Done</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-5">
+                            <h3 class="text-sm font-semibold text-text-primary mb-4">Project Health Distribution</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">On Track</span><span class="text-text-primary">18</span></div>
+                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 75%;"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">At Risk</span><span class="text-text-primary">4</span></div>
+                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 15%;"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Delayed</span><span class="text-text-primary">2</span></div>
+                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 10%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-bg-surface border border-subtle rounded-lg p-5">
+                            <h3 class="text-sm font-semibold text-text-primary mb-4">Department Workload</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Engineering</span><span class="text-text-primary">120 tasks</span></div>
+                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-info rounded-full" style="width: 90%;"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Design</span><span class="text-text-primary">65 tasks</span></div>
+                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-accent rounded-full" style="width: 50%;"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Marketing</span><span class="text-text-primary">30 tasks</span></div>
+                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="w-full bg-warning rounded-full" style="width: 20%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. SETTINGS VIEW -->
+                <div id="view-settings" class="view p-6">
+                    <div class="mb-6">
+                        <h1 class="text-xl font-semibold text-text-primary leading-tight">Settings</h1>
+                        <p class="text-sm text-text-secondary mt-0.5">Manage your workspace and account preferences.</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-6">
+                        <!-- Settings Nav -->
+                        <nav class="space-y-1">
+                            <a href="#" class="block px-3 py-2 text-xs text-text-primary bg-bg-muted rounded-md font-medium">General</a>
+                            <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Account</a>
+                            <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Notifications</a>
+                            <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Integrations</a>
+                            <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Billing</a>
+                        </nav>
+                        
+                        <!-- Settings Form -->
+                        <div class="col-span-2 bg-bg-surface border border-subtle rounded-lg p-6">
+                            <h2 class="text-sm font-semibold text-text-primary mb-4">Workspace Details</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="ws-name" class="block text-xs font-medium text-text-secondary mb-1">Workspace Name</label>
+                                    <input type="text" id="ws-name" value="Codex PM" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="ws-url" class="block text-xs font-medium text-text-secondary mb-1">Workspace URL</label>
+                                    <div class="flex">
+                                        <span class="inline-flex items-center px-3 h-8 bg-bg-muted border border-r-0 border-border-default rounded-l-sm text-xs text-text-muted">codex.io/</span>
+                                        <input type="text" id="ws-url" value="codex-pm" class="flex-1 h-8 bg-bg-app border border-border-default rounded-r-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="ws-desc" class="block text-xs font-medium text-text-secondary mb-1">Description</label>
+                                    <textarea id="ws-desc" rows="3" class="w-full bg-bg-app border border-border-default rounded-sm px-3 py-2 text-xs text-text-primary focus:border-accent focus:outline-none">Project management system for internal teams.</textarea>
+                                </div>
+                                <div class="pt-4 border-t border-subtle flex justify-end">
+                                    <button onclick="showToast('Workspace settings saved!', 'success')" class="h-8 px-4 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md transition-base">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Task Drawer -->
+    <div id="drawer-overlay" class="overlay fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity" onclick="closeTaskDrawer()"></div>
+    <div id="task-drawer" class="drawer fixed inset-y-0 right-0 w-full max-w-md bg-bg-surface border-l border-subtle shadow-2xl z-50 transition-slow flex flex-col">
+        <div class="h-12 border-b border-subtle flex items-center justify-between px-4 flex-shrink-0">
+            <div class="flex items-center space-x-2">
+                <span class="text-[10px] text-text-muted bg-bg-muted px-1.5 py-0.5 rounded-sm">P-101</span>
+                <span class="text-xs text-text-secondary">Mobile App Redesign</span>
+            </div>
+            <div class="flex items-center space-x-1">
+                <button class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="More">
+                    <i class="fa-solid fa-ellipsis text-xs"></i>
+                </button>
+                <button onclick="closeTaskDrawer()" class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="Close">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-5">
+            <div class="flex items-start space-x-2 mb-4">
+                <select class="mt-0.5 bg-transparent text-text-secondary text-xs border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm">
+                    <option>Todo</option>
+                    <option selected>In Progress</option>
+                    <option>Blocked</option>
+                    <option>Completed</option>
+                </select>
+                <input type="text" value="Implement authentication flow" class="flex-1 bg-transparent text-base font-semibold text-text-primary border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm px-1 -ml-1">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-subtle">
+                <div>
+                    <label class="block text-[10px] font-medium uppercase tracking-wider text-text-muted mb-1">Assignee</label>
+                    <div class="flex items-center space-x-1.5">
+                        <img src="https://i.pravatar.cc/20?img=3" class="w-5 h-5 rounded-full" alt="Alex">
+                        <span class="text-xs text-text-primary">Alex K.</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium uppercase tracking-wider text-text-muted mb-1">Reporter</label>
+                    <div class="flex items-center space-x-1.5">
+                        <img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full" alt="Sarah">
+                        <span class="text-xs text-text-primary">Sarah J.</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium uppercase tracking-wider text-text-muted mb-1">Priority</label>
+                    <span class="badge badge-danger">Urgent</span>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-medium uppercase tracking-wider text-text-muted mb-1">Due Date</label>
+                    <span class="text-xs text-text-primary">Oct 20, 2023</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xs font-semibold text-text-primary mb-2">Description</h3>
+                <div class="text-xs text-text-secondary leading-relaxed">
+                    Implement the full authentication flow including login, registration, password reset, and OAuth integration. Ensure JWT tokens are securely stored and refreshed.
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-xs font-semibold text-text-primary mb-2">Subtasks</h3>
+                <div class="space-y-1">
+                    <div class="flex items-center space-x-2 p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
+                        <input type="checkbox" checked class="rounded">
+                        <span class="text-xs text-text-muted line-through">Create login UI</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
+                        <input type="checkbox" class="rounded">
+                        <span class="text-xs text-text-secondary">Setup JWT backend logic</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
+                        <input type="checkbox" class="rounded">
+                        <span class="text-xs text-text-secondary">Implement OAuth Google login</span>
+                    </div>
+                </div>
+                <button class="mt-2 text-xs text-text-muted hover:text-text-primary flex items-center space-x-1 transition-base">
+                    <i class="fa-solid fa-plus text-[10px]"></i><span>Add subtask</span>
+                </button>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-semibold text-text-primary mb-2">Activity</h3>
+                <div class="space-y-3">
+                    <div class="flex space-x-2">
+                        <img src="https://i.pravatar.cc/20?img=3" class="w-5 h-5 rounded-full mt-0.5" alt="Alex">
+                        <div>
+                            <p class="text-xs text-text-primary"><span class="font-medium">Alex K.</span> changed status to <span class="text-info">In Progress</span></p>
+                            <p class="text-[10px] text-text-muted">2 hours ago</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full mt-0.5" alt="Sarah">
+                        <div>
+                            <p class="text-xs text-text-primary"><span class="font-medium">Sarah J.</span> created the task</p>
+                            <p class="text-[10px] text-text-muted">Yesterday</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-subtle">
+            <div class="flex items-center space-x-2">
+                <input type="text" placeholder="Write a comment..." class="flex-1 h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
+                <button class="w-8 h-8 flex items-center justify-center bg-accent hover:bg-accent-hover text-white rounded-sm transition-base" aria-label="Send">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div id="create-task-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="modal-content bg-bg-surface border border-subtle rounded-lg w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-subtle flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-text-primary">Create New Task</h2>
+                <button onclick="closeCreateTaskModal()" class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="Close">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+            
+            <form id="create-task-form" onsubmit="handleCreateTaskSubmit(event)" class="p-4 overflow-y-auto flex-1 space-y-4">
+                <div>
+                    <label for="task-title" class="block text-xs font-medium text-text-secondary mb-1">Title <span class="text-danger">*</span></label>
+                    <input type="text" id="task-title" required class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="e.g. Implement login page">
+                </div>
+                <div>
+                    <label for="task-project" class="block text-xs font-medium text-text-secondary mb-1">Project <span class="text-danger">*</span></label>
+                    <select id="task-project" required class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                        <option value="Mobile App Redesign">Mobile App Redesign</option>
+                        <option value="API Migration v2">API Migration v2</option>
+                        <option value="Website Launch">Website Launch</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="task-assignee" class="block text-xs font-medium text-text-secondary mb-1">Assignee</label>
+                        <select id="task-assignee" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                            <option>Alex K.</option>
+                            <option>Sarah J.</option>
+                            <option>Mark T.</option>
+                            <option>Nina P.</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="task-due-date" class="block text-xs font-medium text-text-secondary mb-1">Due Date</label>
+                        <input type="date" id="task-due-date" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="task-status" class="block text-xs font-medium text-text-secondary mb-1">Status</label>
+                        <select id="task-status" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                            <option value="To Do">To Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Blocked">Blocked</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="task-priority" class="block text-xs font-medium text-text-secondary mb-1">Priority</label>
+                        <select id="task-priority" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label for="task-description" class="block text-xs font-medium text-text-secondary mb-1">Description</label>
+                    <textarea id="task-description" rows="3" class="w-full bg-bg-app border border-border-default rounded-sm px-3 py-2 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="Add more details..."></textarea>
+                </div>
+            </form>
+            
+            <div class="p-4 border-t border-subtle flex justify-end space-x-2">
+                <button onclick="closeCreateTaskModal()" class="h-8 px-4 bg-bg-app border border-border-default hover:bg-bg-elevated text-text-primary text-xs font-medium rounded-md transition-base">Cancel</button>
+                <button onclick="document.getElementById('create-task-form').requestSubmit()" class="h-8 px-4 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md transition-base">Create Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="modal-content bg-bg-surface border border-subtle rounded-lg w-full max-w-sm shadow-2xl">
+            <div class="p-5">
+                <div class="flex items-start space-x-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-danger bg-opacity-10 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-trash-can text-xs text-danger"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-text-primary">Delete Task?</h2>
+                        <p id="delete-modal-text" class="text-xs text-text-secondary mt-1">This action cannot be undone. All related task links will be removed.</p>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button onclick="closeDeleteModal()" class="h-8 px-4 bg-bg-app border border-border-default hover:bg-bg-elevated text-text-primary text-xs font-medium rounded-md transition-base">Cancel</button>
+                    <button id="confirm-delete-btn" class="h-8 px-4 bg-danger hover:bg-danger text-white text-xs font-semibold rounded-md transition-base">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[100] space-y-2 w-80"></div>
+
+    <script>
+        // --- State Management ---
+        let tasks = [
+            { id: 't1', title: 'Implement authentication flow', project: 'Mobile App Redesign', assignee: 'Alex K.', status: 'In Progress', priority: 'Urgent', dueDate: 'Oct 20, 2023' },
+            { id: 't2', title: 'Provision AWS infrastructure', project: 'API Migration v2', assignee: 'Mark T.', status: 'To Do', priority: 'Low', dueDate: 'Oct 26, 2023' },
+            { id: 't3', title: 'Create landing page copy', project: 'Website Launch', assignee: 'Nina P.', status: 'Completed', priority: 'Medium', dueDate: 'Oct 15, 2023' },
+        ];
+        
+        let pendingDeleteId = null;
+
+        // --- Helper Functions ---
+        function getBadgeClass(type, value) {
+            value = value.toLowerCase();
+            if (type === 'status') {
+                if (value === 'completed') return 'badge-success';
+                if (value === 'in progress') return 'badge-info';
+                if (value === 'blocked') return 'badge-warning';
+                return 'badge-muted';
+            }
+            if (type === 'priority') {
+                if (value === 'urgent') return 'badge-danger';
+                if (value === 'high') return 'badge-warning';
+                if (value === 'medium') return 'badge-info';
+                return 'badge-muted';
+            }
+            return 'badge-muted';
+        }
+
+        // --- Routing ---
+        function navigate(route) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${route}`).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.classList.remove('text-text-primary', 'bg-bg-muted');
+                n.classList.add('text-text-secondary');
+                const indicator = n.querySelector('span.absolute');
+                if (indicator) indicator.remove();
+            });
+            
+            const activeNav = document.querySelector(`.nav-item[data-route="${route}"]`);
+            if (activeNav) {
+                activeNav.classList.remove('text-text-secondary');
+                activeNav.classList.add('text-text-primary', 'bg-bg-muted');
+                const indicator = document.createElement('span');
+                indicator.className = 'absolute left-0 top-0 bottom-0 w-0.5 bg-accent rounded-r-full';
+                activeNav.prepend(indicator);
+            }
+            
+            document.getElementById('main-content').scrollTop = 0;
+
+            // Re-render dynamic content if navigating to those views
+            if (route === 'tasks' || route === 'project-detail') {
+                renderTasks();
+            }
+        }
+
+        document.querySelectorAll('[data-route]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigate(link.getAttribute('data-route'));
+            });
+        });
+
+        // --- Project Tabs ---
+        document.querySelectorAll('.proj-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.proj-tab').forEach(t => {
+                    t.classList.remove('text-text-primary', 'border-accent');
+                    t.classList.add('text-text-secondary', 'border-transparent');
+                });
+                tab.classList.add('text-text-primary', 'border-accent');
+                tab.classList.remove('text-text-secondary', 'border-transparent');
+                
+                document.querySelectorAll('.proj-tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(`proj-tab-${tab.getAttribute('data-tab')}`).classList.remove('hidden');
+            });
+        });
+
+        // --- Task Drawer ---
+        function openTaskDrawer() {
+            document.getElementById('drawer-overlay').classList.add('open');
+            document.getElementById('task-drawer').classList.add('open');
+        }
+        function closeTaskDrawer() {
+            document.getElementById('drawer-overlay').classList.remove('open');
+            document.getElementById('task-drawer').classList.remove('open');
+        }
+
+        // --- Create Task Modal ---
+        function openCreateTaskModal() {
+            document.getElementById('create-task-modal').classList.add('open');
+            document.getElementById('task-title').focus();
+        }
+        function closeCreateTaskModal() {
+            document.getElementById('create-task-modal').classList.remove('open');
+            document.getElementById('create-task-form').reset();
+        }
+        function handleCreateTaskSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const project = document.getElementById('task-project').value;
+            const assignee = document.getElementById('task-assignee').value;
+            const dueDate = document.getElementById('task-due-date').value || 'No date';
+            const status = document.getElementById('task-status').value;
+            const priority = document.getElementById('task-priority').value;
+
+            const formattedDate = dueDate !== 'No date' ? new Date(dueDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : 'No date';
+
+            const newTask = {
+                id: 't' + Math.random().toString(36).substr(2, 9),
+                title, project, assignee, status, priority,
+                dueDate: formattedDate
+            };
+
+            tasks.push(newTask);
+            closeCreateTaskModal();
+            renderTasks();
+            updateKPIs();
+            showToast(`Task "${title}" created successfully!`, 'success');
+            triggerNotifDot();
+        }
+
+        // --- Delete Task Modal ---
+        function openDeleteModal(taskId) {
+            pendingDeleteId = taskId;
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                document.getElementById('delete-modal-text').innerText = `Are you sure you want to delete "${task.title}"? This action cannot be undone.`;
+            }
+            document.getElementById('delete-modal').classList.add('open');
+        }
+        function closeDeleteModal() {
+            pendingDeleteId = null;
+            document.getElementById('delete-modal').classList.remove('open');
+        }
+        document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+            if (pendingDeleteId) {
+                const taskIndex = tasks.findIndex(t => t.id === pendingDeleteId);
+                if (taskIndex > -1) {
+                    const deletedTitle = tasks[taskIndex].title;
+                    tasks.splice(taskIndex, 1);
+                    renderTasks();
+                    updateKPIs();
+                    showToast(`Task "${deletedTitle}" deleted.`, 'danger');
+                }
+            }
+            closeDeleteModal();
+        });
+
+        // --- Render Tasks Table (Global & Project Detail) ---
+        function renderTasks() {
+            const globalBody = document.getElementById('global-tasks-body');
+            const projectBody = document.getElementById('project-tasks-body');
+            
+            // Filters only apply to global view visually in this mockup, but data is shared
+            const searchQuery = document.getElementById('task-search')?.value.toLowerCase() || '';
+            const filterProject = document.getElementById('task-filter-project')?.value || '';
+            const filterStatus = document.getElementById('task-filter-status')?.value || '';
+
+            const filteredTasks = tasks.filter(t => {
+                return (t.title.toLowerCase().includes(searchQuery) || t.assignee.toLowerCase().includes(searchQuery)) &&
+                       (filterProject === '' || t.project === filterProject) &&
+                       (filterStatus === '' || t.status === filterStatus);
+            });
+
+            // Render Global Tasks Table
+            if (globalBody) {
+                globalBody.innerHTML = '';
+                if (filteredTasks.length === 0) {
+                    globalBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-text-muted text-xs">No tasks found. Try adjusting your filters or create a new task.</td></tr>`;
+                } else {
+                    filteredTasks.forEach(task => {
+                        const assigneeImg = `https://i.pravatar.cc/20?img=${task.assignee === 'Alex K.' ? 3 : task.assignee === 'Sarah J.' ? 5 : task.assignee === 'Mark T.' ? 8 : 16}`;
+                        const row = `
+                            <tr class="hover:bg-bg-elevated transition-base group">
+                                <td class="py-2.5 pl-4 pr-2"><input type="checkbox" class="rounded"></td>
+                                <td class="py-2.5 px-2 text-text-primary font-medium cursor-pointer hover:text-accent" onclick="openTaskDrawer()">${task.title}</td>
+                                <td class="py-2.5 px-2 text-text-secondary">${task.project}</td>
+                                <td class="py-2.5 px-2"><div class="flex items-center space-x-1.5"><img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${task.assignee}"><span class="text-text-secondary">${task.assignee}</span></div></td>
+                                <td class="py-2.5 px-2">
+                                    <select onchange="updateTaskStatus('${task.id}', this.value)" class="bg-transparent text-text-secondary text-xs border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm cursor-pointer hover:text-text-primary">
+                                        <option ${task.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                                        <option ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                        <option ${task.status === 'Blocked' ? 'selected' : ''}>Blocked</option>
+                                        <option ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                    </select>
+                                </td>
+                                <td class="py-2.5 px-2"><span class="badge ${getBadgeClass('priority', task.priority)}">${task.priority}</span></td>
+                                <td class="py-2.5 px-2 text-text-secondary">${task.dueDate}</td>
+                                <td class="py-2.5 pr-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="openDeleteModal('${task.id}')" class="text-text-muted hover:text-danger px-1" aria-label="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        globalBody.innerHTML += row;
+                    });
+                }
+            }
+
+            // Render Project Detail Tasks Table (Only tasks for "Mobile App Redesign")
+            if (projectBody) {
+                projectBody.innerHTML = '';
+                const projectTasks = tasks.filter(t => t.project === 'Mobile App Redesign');
+                if (projectTasks.length === 0) {
+                    projectBody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-text-muted text-xs">No tasks in this project yet. Click "Add Task" to get started.</td></tr>`;
+                } else {
+                    projectTasks.forEach(task => {
+                        const assigneeImg = `https://i.pravatar.cc/20?img=${task.assignee === 'Alex K.' ? 3 : task.assignee === 'Sarah J.' ? 5 : task.assignee === 'Mark T.' ? 8 : 16}`;
+                        const row = `
+                            <tr class="hover:bg-bg-elevated transition-base group">
+                                <td class="py-2.5 pl-4 pr-2"><input type="checkbox" class="rounded"></td>
+                                <td class="py-2.5 px-2 text-text-primary font-medium cursor-pointer hover:text-accent" onclick="openTaskDrawer()">${task.title}</td>
+                                <td class="py-2.5 px-2"><div class="flex items-center space-x-1.5"><img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${task.assignee}"><span class="text-text-secondary">${task.assignee}</span></div></td>
+                                <td class="py-2.5 px-2">
+                                    <select onchange="updateTaskStatus('${task.id}', this.value)" class="bg-transparent text-text-secondary text-xs border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm cursor-pointer hover:text-text-primary">
+                                        <option ${task.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                                        <option ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                        <option ${task.status === 'Blocked' ? 'selected' : ''}>Blocked</option>
+                                        <option ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                    </select>
+                                </td>
+                                <td class="py-2.5 px-2"><span class="badge ${getBadgeClass('priority', task.priority)}">${task.priority}</span></td>
+                                <td class="py-2.5 px-2 text-text-secondary">${task.dueDate}</td>
+                                <td class="py-2.5 pr-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="openDeleteModal('${task.id}')" class="text-text-muted hover:text-danger px-1" aria-label="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        projectBody.innerHTML += row;
+                    });
+                }
+            }
+        }
+
+        function updateTaskStatus(id, newStatus) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.status = newStatus;
+                showToast(`Task status updated to "${newStatus}"`, 'info');
+                renderTasks(); // Re-render to reflect badge changes if any
+            }
+        }
+
+        function updateKPIs() {
+            const activeTasks = tasks.filter(t => t.status !== 'Completed').length;
+            const kpiElement = document.getElementById('kpi-active-tasks');
+            if (kpiElement) {
+                kpiElement.innerText = activeTasks;
+            }
+        }
+
+        // --- Toast Notifications ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let iconClass = 'fa-circle-info text-info';
+            let borderClass = 'border-l-info';
+            if (type === 'success') {
+                iconClass = 'fa-circle-check text-success';
+                borderClass = 'border-l-success';
+            } else if (type === 'danger') {
+                iconClass = 'fa-circle-exclamation text-danger';
+                borderClass = 'border-l-danger';
+            } else if (type === 'warning') {
+                iconClass = 'fa-triangle-exclamation text-warning';
+                borderClass = 'border-l-warning';
+            }
+
+            toast.className = `toast bg-bg-surface border border-subtle border-l-4 ${borderClass} rounded-md shadow-xl p-3 flex items-start space-x-3`;
+            toast.innerHTML = `
+                <i class="fa-solid ${iconClass} text-sm mt-0.5"></i>
+                <div class="flex-1">
+                    <p class="text-xs text-text-primary font-medium">${message}</p>
+                </div>
+                <button class="text-text-muted hover:text-text-primary" onclick="this.parentElement.remove()">
+                    <i class="fa-solid fa-xmark text-[10px]"></i>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function triggerNotifDot() {
+            const dot = document.getElementById('notif-dot');
+            dot.classList.remove('hidden');
+        }
+
+        document.getElementById('bell-btn').addEventListener('click', () => {
+            const dot = document.getElementById('notif-dot');
+            if (!dot.classList.contains('hidden')) {
+                dot.classList.add('hidden');
+                showToast('No new notifications', 'info');
+            } else {
+                showToast('You are all caught up!', 'success');
+            }
+        });
+
+        // --- Theme Toggle ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        const themeIcon = themeToggle.querySelector('i');
+
+        themeToggle.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                showToast('Light theme enabled', 'info');
+            } else {
+                htmlElement.classList.remove('light');
+                htmlElement.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                showToast('Dark theme enabled', 'info');
+            }
+        });
+
+        // --- Init ---
+        renderTasks();
+        updateKPIs();
+        navigate('dashboard');
+
+    </script>
+</body>
+</html>
