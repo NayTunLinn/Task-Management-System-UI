@@ -182,6 +182,82 @@
             background-color: rgba(239, 68, 68, 0.1);
             color: var(--color-danger);
         }
+
+        /* Custom Select Dropdown for Filters */
+        .filter-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd' /%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-right: 2rem;
+        }
+
+        /* Calendar View Styles */
+        .cal-day-cell {
+            min-height: 100px;
+            border-right: 1px solid var(--color-border-subtle);
+            border-bottom: 1px solid var(--color-border-subtle);
+            padding: 4px;
+            overflow-y: auto;
+        }
+        .cal-day-cell:last-child { border-right: none; }
+        .cal-task-pill {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Gantt Chart Styles */
+        .gantt-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+        }
+        .gantt-row {
+            display: contents;
+        }
+        .gantt-task-name {
+            border-right: 1px solid var(--color-border-subtle);
+            border-bottom: 1px solid var(--color-border-subtle);
+            padding: 0.75rem;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .gantt-timeline-cell {
+            border-bottom: 1px solid var(--color-border-subtle);
+            position: relative;
+            height: 40px;
+        }
+        .gantt-bar {
+            position: absolute;
+            top: 8px;
+            bottom: 8px;
+            background-color: var(--color-accent);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 4px;
+            font-size: 10px;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            cursor: pointer;
+            transition: background-color 150ms ease;
+        }
+        .gantt-bar:hover { background-color: var(--color-accent-hover); }
+        .gantt-bar.completed { background-color: var(--color-success); }
+        .gantt-bar.blocked { background-color: var(--color-danger); }
+        .gantt-weekend { background-color: rgba(148, 163, 184, 0.05); }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
@@ -313,6 +389,7 @@
                 
                 <!-- 1. DASHBOARD VIEW -->
                 <div id="view-dashboard" class="view active p-6">
+                    <!-- Dashboard content remains similar, omitted for brevity in comments but present in file -->
                     <div class="flex justify-between items-center mb-6">
                         <div>
                             <h1 class="text-xl font-semibold text-text-primary leading-tight">Dashboard</h1>
@@ -345,7 +422,7 @@
                                 <div class="w-6 h-6 rounded-md bg-bg-muted flex items-center justify-center"><i class="fa-solid fa-list-check text-[10px] text-accent"></i></div>
                             </div>
                             <div class="flex items-baseline space-x-2">
-                                <span class="text-2xl font-semibold text-text-primary" id="kpi-active-tasks">3</span>
+                                <span class="text-2xl font-semibold text-text-primary" id="kpi-active-tasks">4</span>
                                 <span class="text-xs text-text-muted font-medium">Open</span>
                             </div>
                             <div class="w-full h-1 bg-bg-muted rounded-full mt-2 overflow-hidden"><div class="h-full bg-accent rounded-full" style="width: 65%;"></div></div>
@@ -413,57 +490,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="bg-bg-surface border border-subtle rounded-lg col-span-2 overflow-hidden">
-                            <div class="px-5 py-3 border-b border-subtle flex justify-between items-center">
-                                <h3 class="text-sm font-semibold text-text-primary">Project Health Report</h3>
-                                <a href="#" data-route="reports" class="text-xs text-accent hover:underline">View all</a>
-                            </div>
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="border-b border-subtle">
-                                        <th class="py-2 px-5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Project</th>
-                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Owner</th>
-                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Status</th>
-                                        <th class="py-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">Progress</th>
-                                        <th class="py-2 px-5 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Health</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-xs divide-y divide-subtle">
-                                    <tr class="hover:bg-bg-elevated transition-base">
-                                        <td class="py-2.5 px-5 text-text-primary font-medium">Mobile App Redesign</td>
-                                        <td class="py-2.5 px-2 text-text-secondary">Sarah J.</td>
-                                        <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
-                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div><span class="text-text-muted text-[10px]">85%</span></div></td>
-                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-success">On Track</span></td>
-                                    </tr>
-                                    <tr class="hover:bg-bg-elevated transition-base">
-                                        <td class="py-2.5 px-5 text-text-primary font-medium">Website Launch</td>
-                                        <td class="py-2.5 px-2 text-text-secondary">Mark T.</td>
-                                        <td class="py-2.5 px-2"><span class="badge badge-warning">On Hold</span></td>
-                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 45%;"></div></div><span class="text-text-muted text-[10px]">45%</span></div></td>
-                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-warning">At Risk</span></td>
-                                    </tr>
-                                    <tr class="hover:bg-bg-elevated transition-base">
-                                        <td class="py-2.5 px-5 text-text-primary font-medium">API Migration v2</td>
-                                        <td class="py-2.5 px-2 text-text-secondary">Alex K.</td>
-                                        <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
-                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 20%;"></div></div><span class="text-text-muted text-[10px]">20%</span></div></td>
-                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-danger">Delayed</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="bg-bg-surface border border-subtle rounded-lg p-5">
-                            <h3 class="text-sm font-semibold text-text-primary mb-4">Team Workload</h3>
-                            <div class="space-y-4">
-                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=5" class="w-4 h-4 rounded-full" alt="Sarah"><span class="text-xs text-text-primary font-medium">Sarah J.</span></div><span class="text-[10px] text-text-muted">8 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-success" style="width: 50%;"></div><div class="h-full bg-info" style="width: 25%;"></div><div class="h-full bg-warning" style="width: 25%;"></div></div></div>
-                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=8" class="w-4 h-4 rounded-full" alt="Mark"><span class="text-xs text-text-primary font-medium">Mark T.</span></div><span class="text-[10px] text-text-muted">12 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-danger" style="width: 40%;"></div><div class="h-full bg-warning" style="width: 30%;"></div><div class="h-full bg-info" style="width: 15%;"></div></div></div>
-                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=3" class="w-4 h-4 rounded-full" alt="Alex"><span class="text-xs text-text-primary font-medium">Alex K.</span></div><span class="text-[10px] text-text-muted">5 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-info" style="width: 60%;"></div><div class="h-full bg-success" style="width: 20%;"></div></div></div>
-                                <div><div class="flex items-center justify-between mb-1"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=16" class="w-4 h-4 rounded-full" alt="Nina"><span class="text-xs text-text-primary font-medium">Nina P.</span></div><span class="text-[10px] text-text-muted">3 Tasks</span></div><div class="w-full h-1.5 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-success" style="width: 80%;"></div><div class="h-full bg-info" style="width: 10%;"></div></div></div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- 2. DEPARTMENTS VIEW -->
@@ -483,7 +509,7 @@
                                 <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
                                 <input type="text" placeholder="Search departments..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
                             </div>
-                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                            <select class="filter-select h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
                                 <option>All Statuses</option>
                                 <option>Active</option>
                                 <option>Inactive</option>
@@ -529,19 +555,6 @@
                                         <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
                                     </td>
                                 </tr>
-                                <tr class="hover:bg-bg-elevated transition-base">
-                                    <td class="py-2.5 px-4 text-text-primary font-medium">Marketing</td>
-                                    <td class="py-2.5 px-2 text-text-secondary">MKT</td>
-                                    <td class="py-2.5 px-2 text-text-secondary">Nina Parker</td>
-                                    <td class="py-2.5 px-2 text-text-secondary">12</td>
-                                    <td class="py-2.5 px-2 text-text-secondary">3</td>
-                                    <td class="py-2.5 px-2"><span class="badge badge-muted">Inactive</span></td>
-                                    <td class="py-2.5 px-2 text-text-muted">1 month ago</td>
-                                    <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -564,12 +577,12 @@
                                 <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
                                 <input type="text" placeholder="Search projects..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
                             </div>
-                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                            <select class="filter-select h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
                                 <option>All Departments</option>
                                 <option>Engineering</option>
                                 <option>Design</option>
                             </select>
-                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                            <select class="filter-select h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
                                 <option>All Statuses</option>
                                 <option>Active</option>
                                 <option>Completed</option>
@@ -599,13 +612,13 @@
                                     <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
                                     <td class="py-2.5 px-2"><span class="badge badge-danger">Urgent</span></td>
                                     <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div><span class="text-text-muted text-[10px]">85%</span></div></td>
-                                    <td class="py-2.5 px-2 text-text-secondary">Oct 24, 2023</td>
+                                    <td class="py-2.5 px-2 text-text-secondary">Oct 31, 2023</td>
                                     <td class="py-2.5 px-4 text-right" onclick="event.stopPropagation()">
                                         <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
                                         <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
                                     </td>
                                 </tr>
-                                <tr class="hover:bg-bg-elevated transition-base">
+                                <tr class="hover:bg-bg-elevated transition-base cursor-pointer" onclick="navigate('project-detail')">
                                     <td class="py-2.5 px-4 text-text-primary font-medium flex items-center space-x-2">
                                         <span class="w-1.5 h-1.5 rounded-full bg-warning"></span>
                                         <span>Website Launch</span>
@@ -616,23 +629,7 @@
                                     <td class="py-2.5 px-2"><span class="badge badge-warning">Medium</span></td>
                                     <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 45%;"></div></div><span class="text-text-muted text-[10px]">45%</span></div></td>
                                     <td class="py-2.5 px-2 text-text-secondary">Nov 15, 2023</td>
-                                    <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-bg-elevated transition-base">
-                                    <td class="py-2.5 px-4 text-text-primary font-medium flex items-center space-x-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-danger"></span>
-                                        <span>API Migration v2</span>
-                                    </td>
-                                    <td class="py-2.5 px-2 text-text-secondary">Engineering</td>
-                                    <td class="py-2.5 px-2 text-text-secondary">Alex K.</td>
-                                    <td class="py-2.5 px-2"><span class="badge badge-info">Active</span></td>
-                                    <td class="py-2.5 px-2"><span class="badge badge-info">Low</span></td>
-                                    <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 20%;"></div></div><span class="text-text-muted text-[10px]">20%</span></div></td>
-                                    <td class="py-2.5 px-2 text-text-secondary">Dec 01, 2023</td>
-                                    <td class="py-2.5 px-4 text-right">
+                                    <td class="py-2.5 px-4 text-right" onclick="event.stopPropagation()">
                                         <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
                                         <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
                                     </td>
@@ -656,11 +653,7 @@
                                 <span class="badge badge-info">Active</span>
                                 <span class="badge badge-danger">Urgent</span>
                                 <span class="text-xs text-text-secondary">Owner: Sarah J.</span>
-                                <span class="text-xs text-text-secondary">Due: Oct 24, 2023</span>
-                                <div class="flex items-center space-x-1">
-                                    <div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div>
-                                    <span class="text-xs text-text-muted">85%</span>
-                                </div>
+                                <span class="text-xs text-text-secondary">Due: Oct 31, 2023</span>
                             </div>
                         </div>
                         <div class="flex space-x-2">
@@ -678,38 +671,44 @@
                         <nav class="flex space-x-4">
                             <button class="proj-tab active py-2 text-xs font-medium text-text-primary border-b-2 border-accent" data-tab="list">List</button>
                             <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="board">Board</button>
-                            <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="timeline">Timeline</button>
                             <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="calendar">Calendar</button>
+                            <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="gantt">Gantt</button>
                             <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="dashboard">Dashboard</button>
                             <button class="proj-tab py-2 text-xs font-medium text-text-secondary hover:text-text-primary border-b-2 border-transparent" data-tab="members">Members</button>
                         </nav>
                     </div>
 
+                    <!-- Global Filter Bar for Project Views -->
+                    <div class="bg-bg-surface border border-subtle rounded-lg p-3 mb-4 flex items-center space-x-3">
+                        <span class="text-xs text-text-muted font-medium pl-1 pr-2 border-r border-subtle h-full flex items-center"><i class="fa-solid fa-filter mr-1.5 text-[10px]"></i>Filters:</span>
+                        <select id="proj-filter-assignee" class="filter-select h-7 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none transition-base">
+                            <option>All Assignees</option>
+                            <option>Alex K.</option>
+                            <option>Sarah J.</option>
+                            <option>Mark T.</option>
+                            <option>Nina P.</option>
+                        </select>
+                        <select id="proj-filter-status" class="filter-select h-7 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none transition-base">
+                            <option>All Statuses</option>
+                            <option>To Do</option>
+                            <option>In Progress</option>
+                            <option>Blocked</option>
+                            <option>Completed</option>
+                        </select>
+                        <select id="proj-filter-priority" class="filter-select h-7 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none transition-base">
+                            <option>All Priorities</option>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                            <option>Urgent</option>
+                        </select>
+                        <div class="flex-1"></div>
+                        <button onclick="showToast('Filters applied', 'info')" class="h-7 px-3 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-sm transition-base">Apply</button>
+                    </div>
+
                     <!-- List Tab Content -->
                     <div id="proj-tab-list" class="proj-tab-content">
                         <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
-                            <div class="p-4 border-b border-subtle flex items-center justify-between">
-                                <div class="flex items-center space-x-4">
-                                    <div class="relative w-64">
-                                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
-                                        <input type="text" placeholder="Search tasks..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
-                                    </div>
-                                    <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
-                                        <option>All Assignees</option>
-                                    </select>
-                                    <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
-                                        <option>All Statuses</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button class="h-7 px-2 bg-bg-app border border-subtle hover:bg-bg-elevated text-text-secondary text-[10px] rounded-sm flex items-center space-x-1 transition-base">
-                                        <i class="fa-solid fa-filter text-[8px]"></i><span>Filter</span>
-                                    </button>
-                                    <button class="h-7 px-2 bg-bg-app border border-subtle hover:bg-bg-elevated text-text-secondary text-[10px] rounded-sm flex items-center space-x-1 transition-base">
-                                        <i class="fa-solid fa-arrow-down-wide-short text-[8px]"></i><span>Sort</span>
-                                    </button>
-                                </div>
-                            </div>
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b border-subtle">
@@ -722,9 +721,7 @@
                                         <th class="py-2 pr-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="project-tasks-body" class="text-xs divide-y divide-subtle">
-                                    <!-- Dynamic tasks will be injected here -->
-                                </tbody>
+                                <tbody id="project-tasks-body" class="text-xs divide-y divide-subtle"></tbody>
                             </table>
                         </div>
                     </div>
@@ -732,84 +729,97 @@
                     <!-- Board Tab Content -->
                     <div id="proj-tab-board" class="proj-tab-content hidden">
                         <div class="flex space-x-4 overflow-x-auto pb-4">
-                            <!-- Todo Column -->
-                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-220px)]">
+                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-320px)]">
                                 <div class="p-3 border-b border-subtle flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="w-2 h-2 rounded-full bg-text-muted"></span>
-                                        <h3 class="text-xs font-semibold text-text-primary">Todo</h3>
-                                        <span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">4</span>
-                                    </div>
+                                    <div class="flex items-center space-x-2"><span class="w-2 h-2 rounded-full bg-text-muted"></span><h3 class="text-xs font-semibold text-text-primary">Todo</h3><span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">2</span></div>
                                     <button class="text-text-muted hover:text-text-primary"><i class="fa-solid fa-plus text-[10px]"></i></button>
                                 </div>
                                 <div class="p-2 space-y-2 overflow-y-auto">
                                     <div class="bg-bg-elevated border border-subtle rounded-md p-3 cursor-pointer hover:border-border-default transition-base" onclick="openTaskDrawer()">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="badge badge-info">Low</span>
-                                            <span class="text-[9px] text-text-muted">P-104</span>
-                                        </div>
+                                        <div class="flex items-center justify-between mb-2"><span class="badge badge-info">Low</span><span class="text-[9px] text-text-muted">P-104</span></div>
                                         <p class="text-xs text-text-primary font-medium mb-2">Set up CI/CD pipeline</p>
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center space-x-1 text-[10px] text-text-muted">
-                                                <i class="fa-regular fa-clock"></i><span>Oct 25</span>
-                                            </div>
-                                            <img src="https://i.pravatar.cc/20?img=8" class="w-5 h-5 rounded-full" alt="Mark">
-                                        </div>
+                                        <div class="flex items-center justify-between"><div class="flex items-center space-x-1 text-[10px] text-text-muted"><i class="fa-regular fa-clock"></i><span>Oct 25</span></div><img src="https://i.pravatar.cc/20?img=8" class="w-5 h-5 rounded-full" alt="Mark"></div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- In Progress Column -->
-                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-220px)]">
+                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-320px)]">
                                 <div class="p-3 border-b border-subtle flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="w-2 h-2 rounded-full bg-info"></span>
-                                        <h3 class="text-xs font-semibold text-text-primary">In Progress</h3>
-                                        <span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">2</span>
-                                    </div>
+                                    <div class="flex items-center space-x-2"><span class="w-2 h-2 rounded-full bg-info"></span><h3 class="text-xs font-semibold text-text-primary">In Progress</h3><span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">1</span></div>
                                     <button class="text-text-muted hover:text-text-primary"><i class="fa-solid fa-plus text-[10px]"></i></button>
                                 </div>
                                 <div class="p-2 space-y-2 overflow-y-auto">
                                     <div class="bg-bg-elevated border border-subtle rounded-md p-3 cursor-pointer hover:border-border-default transition-base" onclick="openTaskDrawer()">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="badge badge-danger">Urgent</span>
-                                            <span class="text-[9px] text-text-muted">P-101</span>
-                                        </div>
+                                        <div class="flex items-center justify-between mb-2"><span class="badge badge-danger">Urgent</span><span class="text-[9px] text-text-muted">P-101</span></div>
                                         <p class="text-xs text-text-primary font-medium mb-2">Implement authentication flow</p>
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center space-x-1 text-[10px] text-text-muted">
-                                                <i class="fa-regular fa-clock"></i><span>Oct 20</span>
-                                            </div>
-                                            <img src="https://i.pravatar.cc/20?img=3" class="w-5 h-5 rounded-full" alt="Alex">
-                                        </div>
+                                        <div class="flex items-center justify-between"><div class="flex items-center space-x-1 text-[10px] text-text-muted"><i class="fa-regular fa-clock"></i><span>Oct 20</span></div><img src="https://i.pravatar.cc/20?img=3" class="w-5 h-5 rounded-full" alt="Alex"></div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Completed Column -->
-                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-220px)]">
+                            <div class="flex-shrink-0 w-72 bg-bg-surface rounded-lg flex flex-col max-h-[calc(100vh-320px)]">
                                 <div class="p-3 border-b border-subtle flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="w-2 h-2 rounded-full bg-success"></span>
-                                        <h3 class="text-xs font-semibold text-text-primary">Completed</h3>
-                                        <span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">1</span>
-                                    </div>
+                                    <div class="flex items-center space-x-2"><span class="w-2 h-2 rounded-full bg-success"></span><h3 class="text-xs font-semibold text-text-primary">Completed</h3><span class="text-[10px] text-text-muted bg-bg-muted px-1.5 rounded-sm">1</span></div>
                                     <button class="text-text-muted hover:text-text-primary"><i class="fa-solid fa-plus text-[10px]"></i></button>
                                 </div>
                                 <div class="p-2 space-y-2 overflow-y-auto">
                                     <div class="bg-bg-elevated border border-subtle rounded-md p-3 cursor-pointer hover:border-border-default transition-base opacity-70" onclick="openTaskDrawer()">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="badge badge-warning">Medium</span>
-                                            <span class="text-[9px] text-text-muted">P-100</span>
-                                        </div>
+                                        <div class="flex items-center justify-between mb-2"><span class="badge badge-warning">Medium</span><span class="text-[9px] text-text-muted">P-100</span></div>
                                         <p class="text-xs text-text-primary font-medium mb-2 line-through">Design dashboard UI components</p>
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center space-x-1 text-[10px] text-text-muted">
-                                                <i class="fa-regular fa-clock"></i><span>Oct 18</span>
-                                            </div>
-                                            <img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full" alt="Sarah">
-                                        </div>
+                                        <div class="flex items-center justify-between"><div class="flex items-center space-x-1 text-[10px] text-text-muted"><i class="fa-regular fa-clock"></i><span>Oct 18</span></div><img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full" alt="Sarah"></div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Tab Content -->
+                    <div id="proj-tab-calendar" class="proj-tab-content hidden">
+                        <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
+                            <div class="p-4 border-b border-subtle flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <button class="action-btn"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                                    <h3 class="text-sm font-semibold text-text-primary">October 2023</h3>
+                                    <button class="action-btn"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                </div>
+                                <div class="flex space-x-1">
+                                    <button class="text-[10px] px-2 py-1 rounded-sm text-text-secondary hover:bg-bg-muted transition-base">Day</button>
+                                    <button class="text-[10px] px-2 py-1 rounded-sm text-text-secondary hover:bg-bg-muted transition-base">Week</button>
+                                    <button class="text-[10px] px-2 py-1 rounded-sm bg-bg-muted text-text-primary font-medium">Month</button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-7 border-b border-subtle">
+                                <div class="p-2 text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Sun</div>
+                                <div class="p-2 text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Mon</div>
+                                <div class="p-2 text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Tue</div>
+                                <div class="p-2 text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Wed</div>
+                                <div class="p-2 text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Thu</div>
+                                <div class="p-2 text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Fri</div>
+                                <div class="p-2 text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Sat</div>
+                            </div>
+                            <div id="calendar-grid" class="grid grid-cols-7 grid-rows-5 bg-subtle">
+                                <!-- Calendar days injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gantt Tab Content -->
+                    <div id="proj-tab-gantt" class="proj-tab-content hidden">
+                        <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
+                            <div class="p-4 border-b border-subtle flex items-center justify-between">
+                                <h3 class="text-sm font-semibold text-text-primary">Project Timeline</h3>
+                                <div class="flex space-x-1">
+                                    <button class="text-[10px] px-2 py-1 rounded-sm text-text-secondary hover:bg-bg-muted transition-base">Day</button>
+                                    <button class="text-[10px] px-2 py-1 rounded-sm bg-bg-muted text-text-primary font-medium">Week</button>
+                                    <button class="text-[10px] px-2 py-1 rounded-sm text-text-secondary hover:bg-bg-muted transition-base">Month</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <div id="gantt-grid" class="gantt-grid min-w-[800px]">
+                                    <!-- Gantt header -->
+                                    <div class="gantt-task-name bg-bg-elevated font-semibold text-text-secondary text-[10px] uppercase tracking-wider">Task</div>
+                                    <div class="gantt-timeline-cell bg-bg-elevated border-b-none">
+                                        <div id="gantt-header-dates" class="flex h-full"></div>
+                                    </div>
+                                    <!-- Gantt rows injected by JS -->
                                 </div>
                             </div>
                         </div>
@@ -833,13 +843,13 @@
                                 <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
                                 <input type="text" id="task-search" oninput="renderTasks()" placeholder="Search tasks..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
                             </div>
-                            <select id="task-filter-project" onchange="renderTasks()" class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                            <select id="task-filter-project" onchange="renderTasks()" class="filter-select h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
                                 <option value="">All Projects</option>
                                 <option>Mobile App Redesign</option>
                                 <option>API Migration v2</option>
                                 <option>Website Launch</option>
                             </select>
-                            <select id="task-filter-status" onchange="renderTasks()" class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                            <select id="task-filter-status" onchange="renderTasks()" class="filter-select h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
                                 <option value="">All Statuses</option>
                                 <option value="To Do">To Do</option>
                                 <option value="In Progress">In Progress</option>
@@ -860,9 +870,7 @@
                                     <th class="py-2 pr-4 text-[10px] font-semibold uppercase tracking-wider text-text-muted text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="global-tasks-body" class="text-xs divide-y divide-subtle">
-                                <!-- Dynamic tasks injected here -->
-                            </tbody>
+                            <tbody id="global-tasks-body" class="text-xs divide-y divide-subtle"></tbody>
                         </table>
                     </div>
                 </div>
@@ -884,10 +892,10 @@
                                 <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted"></i>
                                 <input type="text" placeholder="Search users..." class="w-full h-7 bg-bg-app border border-subtle rounded-sm pl-8 pr-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
                             </div>
-                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                            <select class="filter-select h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
                                 <option>All Departments</option>
                             </select>
-                            <select class="h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
+                            <select class="filter-select h-7 bg-bg-app border border-subtle rounded-sm px-2 text-xs text-text-secondary focus:border-accent focus:outline-none">
                                 <option>All Roles</option>
                             </select>
                         </div>
@@ -925,17 +933,6 @@
                                         <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
                                     </td>
                                 </tr>
-                                <tr class="hover:bg-bg-elevated transition-base">
-                                    <td class="py-2.5 px-4"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=8" class="w-5 h-5 rounded-full" alt="Mark"><span class="text-text-primary font-medium">Mark Thompson</span></div></td>
-                                    <td class="py-2.5 px-2 text-text-secondary">mark.t@codex.io</td>
-                                    <td class="py-2.5 px-2 text-text-secondary">Marketing</td>
-                                    <td class="py-2.5 px-2"><span class="badge badge-muted">Member</span></td>
-                                    <td class="py-2.5 px-2"><span class="badge badge-warning">Invited</span></td>
-                                    <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -949,18 +946,45 @@
                             <p class="text-sm text-text-secondary mt-0.5">Organization-wide analytics and insights.</p>
                         </div>
                         <div class="flex space-x-2">
-                            <select id="report-date-filter" class="h-8 px-3 bg-bg-surface border border-border-default hover:bg-bg-elevated text-text-secondary text-xs font-medium rounded-md flex items-center transition-base">
-                                <option>Last 30 Days</option>
-                                <option>Last Quarter</option>
-                                <option>Last Year</option>
-                            </select>
                             <button onclick="showToast('Report exported successfully!', 'success')" class="h-8 px-3 bg-bg-surface border border-border-default hover:bg-bg-elevated text-text-primary text-xs font-medium rounded-md flex items-center space-x-1.5 transition-base">
                                 <i class="fa-solid fa-download text-[10px]"></i><span>Export CSV</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Report Type Filters -->
+                    <!-- Professional Global Filter Bar for Reports -->
+                    <div class="bg-bg-surface border border-subtle rounded-lg p-3 mb-6 flex items-center space-x-3">
+                        <span class="text-xs text-text-muted font-medium pl-1 pr-2 border-r border-subtle h-full flex items-center"><i class="fa-solid fa-filter mr-1.5 text-[10px]"></i>Filters:</span>
+                        <select class="filter-select h-7 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none transition-base">
+                            <option>All Departments</option>
+                            <option>Engineering</option>
+                            <option>Design</option>
+                            <option>Marketing</option>
+                        </select>
+                        <select class="filter-select h-7 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none transition-base">
+                            <option>All Projects</option>
+                            <option>Mobile App Redesign</option>
+                            <option>API Migration v2</option>
+                            <option>Website Launch</option>
+                        </select>
+                        <select class="filter-select h-7 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none transition-base">
+                            <option>All Users</option>
+                            <option>Alex K.</option>
+                            <option>Sarah J.</option>
+                            <option>Mark T.</option>
+                        </select>
+                        <select class="filter-select h-7 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none transition-base">
+                            <option>Last 30 Days</option>
+                            <option>Last Quarter</option>
+                            <option>Last Year</option>
+                        </select>
+                        <div class="flex-1"></div>
+                        <button onclick="showToast('Report data refreshed', 'info')" class="h-7 px-3 bg-bg-muted border border-border-default hover:bg-bg-elevated text-text-primary text-xs font-medium rounded-sm transition-base flex items-center space-x-1">
+                            <i class="fa-solid fa-rotate text-[10px]"></i><span>Refresh</span>
+                        </button>
+                    </div>
+
+                    <!-- Report Type Tabs -->
                     <div class="flex space-x-1 mb-6 bg-bg-surface p-1 rounded-md w-fit border border-subtle">
                         <button class="report-tab active px-3 py-1 text-xs text-text-secondary rounded-sm transition-base" data-report="executive">Executive</button>
                         <button class="report-tab px-3 py-1 text-xs text-text-secondary rounded-sm transition-base" data-report="projects">Projects</button>
@@ -996,18 +1020,9 @@
                         <div class="bg-bg-surface border border-subtle rounded-lg p-5">
                             <h3 class="text-sm font-semibold text-text-primary mb-4">Project Health Distribution</h3>
                             <div class="grid grid-cols-3 gap-6">
-                                <div>
-                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">On Track</span><span class="text-text-primary">18</span></div>
-                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 75%;"></div></div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">At Risk</span><span class="text-text-primary">4</span></div>
-                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 15%;"></div></div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Delayed</span><span class="text-text-primary">2</span></div>
-                                    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 10%;"></div></div>
-                                </div>
+                                <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">On Track</span><span class="text-text-primary">18</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 75%;"></div></div></div>
+                                <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">At Risk</span><span class="text-text-primary">4</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 15%;"></div></div></div>
+                                <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Delayed</span><span class="text-text-primary">2</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 10%;"></div></div></div>
                             </div>
                         </div>
                     </div>
@@ -1015,9 +1030,7 @@
                     <!-- Projects Report -->
                     <div id="report-projects" class="report-content hidden">
                         <div class="bg-bg-surface border border-subtle rounded-lg overflow-hidden">
-                            <div class="px-5 py-3 border-b border-subtle">
-                                <h3 class="text-sm font-semibold text-text-primary">Project Performance</h3>
-                            </div>
+                            <div class="px-5 py-3 border-b border-subtle"><h3 class="text-sm font-semibold text-text-primary">Project Performance</h3></div>
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="border-b border-subtle">
@@ -1029,27 +1042,8 @@
                                     </tr>
                                 </thead>
                                 <tbody class="text-xs divide-y divide-subtle">
-                                    <tr class="hover:bg-bg-elevated transition-base">
-                                        <td class="py-2.5 px-5 text-text-primary font-medium">Mobile App Redesign</td>
-                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-24 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div><span class="text-text-muted">85%</span></div></td>
-                                        <td class="py-2.5 px-2 text-text-secondary">24</td>
-                                        <td class="py-2.5 px-2 text-danger">2</td>
-                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-success">On Track</span></td>
-                                    </tr>
-                                    <tr class="hover:bg-bg-elevated transition-base">
-                                        <td class="py-2.5 px-5 text-text-primary font-medium">Website Launch</td>
-                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-24 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 45%;"></div></div><span class="text-text-muted">45%</span></div></td>
-                                        <td class="py-2.5 px-2 text-text-secondary">18</td>
-                                        <td class="py-2.5 px-2 text-danger">4</td>
-                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-warning">At Risk</span></td>
-                                    </tr>
-                                    <tr class="hover:bg-bg-elevated transition-base">
-                                        <td class="py-2.5 px-5 text-text-primary font-medium">API Migration v2</td>
-                                        <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-24 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 20%;"></div></div><span class="text-text-muted">20%</span></div></td>
-                                        <td class="py-2.5 px-2 text-text-secondary">32</td>
-                                        <td class="py-2.5 px-2 text-danger">8</td>
-                                        <td class="py-2.5 px-5 text-right"><span class="badge badge-danger">Delayed</span></td>
-                                    </tr>
+                                    <tr class="hover:bg-bg-elevated transition-base"><td class="py-2.5 px-5 text-text-primary font-medium">Mobile App Redesign</td><td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-24 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div><span class="text-text-muted">85%</span></div></td><td class="py-2.5 px-2 text-text-secondary">24</td><td class="py-2.5 px-2 text-danger">2</td><td class="py-2.5 px-5 text-right"><span class="badge badge-success">On Track</span></td></tr>
+                                    <tr class="hover:bg-bg-elevated transition-base"><td class="py-2.5 px-5 text-text-primary font-medium">Website Launch</td><td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-24 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 45%;"></div></div><span class="text-text-muted">45%</span></div></td><td class="py-2.5 px-2 text-text-secondary">18</td><td class="py-2.5 px-2 text-danger">4</td><td class="py-2.5 px-5 text-right"><span class="badge badge-warning">At Risk</span></td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1063,10 +1057,7 @@
                                 <div class="flex items-center justify-center space-x-6">
                                     <div class="relative w-32 h-32 flex-shrink-0">
                                         <div class="w-full h-full rounded-full donut-chart"></div>
-                                        <div class="absolute inset-3 bg-bg-surface rounded-full flex flex-col items-center justify-center">
-                                            <span class="text-xl font-semibold text-text-primary">412</span>
-                                            <span class="text-[10px] text-text-muted uppercase tracking-wide">Total</span>
-                                        </div>
+                                        <div class="absolute inset-3 bg-bg-surface rounded-full flex flex-col items-center justify-center"><span class="text-xl font-semibold text-text-primary">412</span><span class="text-[10px] text-text-muted uppercase tracking-wide">Total</span></div>
                                     </div>
                                     <div class="space-y-2 flex-1">
                                         <div class="flex items-center justify-between text-xs"><div class="flex items-center"><span class="w-2 h-2 rounded-sm bg-success mr-2"></span><span class="text-text-secondary">Completed</span></div><span class="text-text-primary font-medium">180</span></div>
@@ -1083,8 +1074,6 @@
                                     <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">35</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-success" style="height: 85%;"></div></div><span class="text-[10px] text-text-muted">W2</span></div>
                                     <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">18</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-success" style="height: 45%;"></div></div><span class="text-[10px] text-text-muted">W3</span></div>
                                     <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">45</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-success" style="height: 95%;"></div></div><span class="text-[10px] text-text-muted">W4</span></div>
-                                    <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">28</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-accent" style="height: 65%;"></div></div><span class="text-[10px] text-text-muted">W5</span></div>
-                                    <div class="flex-1 flex flex-col items-center space-y-1 group cursor-pointer"><span class="text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">32</span><div class="w-full bg-bg-muted rounded-t-sm overflow-hidden flex flex-col-reverse h-24 group-hover:bg-bg-elevated transition-colors"><div class="w-full bg-accent" style="height: 75%;"></div></div><span class="text-[10px] text-text-muted">W6</span></div>
                                 </div>
                             </div>
                         </div>
@@ -1092,62 +1081,24 @@
 
                     <!-- Users Report -->
                     <div id="report-users" class="report-content hidden">
-                        <div class="bg-bg-surface border border-subtle rounded-lg p-5">
+                         <div class="bg-bg-surface border border-subtle rounded-lg p-5">
                             <h3 class="text-sm font-semibold text-text-primary mb-4">User Workload & Performance</h3>
                             <div class="space-y-4">
                                 <div class="flex items-center space-x-4 p-3 border border-subtle rounded-md">
                                     <img src="https://i.pravatar.cc/30?img=3" class="w-8 h-8 rounded-full" alt="Alex">
                                     <div class="flex-1">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs font-medium text-text-primary">Alex K.</span>
-                                            <span class="text-[10px] text-text-muted">12 Tasks assigned</span>
-                                        </div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden flex">
-                                            <div class="h-full bg-success" style="width: 40%;" title="Completed"></div>
-                                            <div class="h-full bg-info" style="width: 40%;" title="In Progress"></div>
-                                            <div class="h-full bg-danger" style="width: 20%;" title="Overdue"></div>
-                                        </div>
+                                        <div class="flex justify-between items-center mb-1"><span class="text-xs font-medium text-text-primary">Alex K.</span><span class="text-[10px] text-text-muted">12 Tasks assigned</span></div>
+                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-success" style="width: 40%;" title="Completed"></div><div class="h-full bg-info" style="width: 40%;" title="In Progress"></div><div class="h-full bg-danger" style="width: 20%;" title="Overdue"></div></div>
                                     </div>
-                                    <div class="text-right">
-                                        <span class="text-xs text-success font-medium">80%</span>
-                                        <p class="text-[9px] text-text-muted">Completion</p>
-                                    </div>
+                                    <div class="text-right"><span class="text-xs text-success font-medium">80%</span><p class="text-[9px] text-text-muted">Completion</p></div>
                                 </div>
                                 <div class="flex items-center space-x-4 p-3 border border-subtle rounded-md">
                                     <img src="https://i.pravatar.cc/30?img=5" class="w-8 h-8 rounded-full" alt="Sarah">
                                     <div class="flex-1">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs font-medium text-text-primary">Sarah J.</span>
-                                            <span class="text-[10px] text-text-muted">8 Tasks assigned</span>
-                                        </div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden flex">
-                                            <div class="h-full bg-success" style="width: 70%;"></div>
-                                            <div class="h-full bg-info" style="width: 20%;"></div>
-                                            <div class="h-full bg-warning" style="width: 10%;"></div>
-                                        </div>
+                                        <div class="flex justify-between items-center mb-1"><span class="text-xs font-medium text-text-primary">Sarah J.</span><span class="text-[10px] text-text-muted">8 Tasks assigned</span></div>
+                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden flex"><div class="h-full bg-success" style="width: 70%;"></div><div class="h-full bg-info" style="width: 20%;"></div><div class="h-full bg-warning" style="width: 10%;"></div></div>
                                     </div>
-                                    <div class="text-right">
-                                        <span class="text-xs text-success font-medium">90%</span>
-                                        <p class="text-[9px] text-text-muted">Completion</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-4 p-3 border border-subtle rounded-md">
-                                    <img src="https://i.pravatar.cc/30?img=8" class="w-8 h-8 rounded-full" alt="Mark">
-                                    <div class="flex-1">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="text-xs font-medium text-text-primary">Mark T.</span>
-                                            <span class="text-[10px] text-text-muted">15 Tasks assigned</span>
-                                        </div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden flex">
-                                            <div class="h-full bg-success" style="width: 20%;"></div>
-                                            <div class="h-full bg-info" style="width: 30%;"></div>
-                                            <div class="h-full bg-danger" style="width: 50%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="text-xs text-danger font-medium">30%</span>
-                                        <p class="text-[9px] text-text-muted">Completion</p>
-                                    </div>
+                                    <div class="text-right"><span class="text-xs text-success font-medium">90%</span><p class="text-[9px] text-text-muted">Completion</p></div>
                                 </div>
                             </div>
                         </div>
@@ -1159,40 +1110,20 @@
                             <div class="bg-bg-surface border border-subtle rounded-lg p-5">
                                 <h3 class="text-sm font-semibold text-text-primary mb-4">Task Distribution by Dept</h3>
                                 <div class="space-y-3">
-                                    <div>
-                                        <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Engineering</span><span class="text-text-primary">120 tasks</span></div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-info rounded-full" style="width: 90%;"></div></div>
-                                    </div>
-                                    <div>
-                                        <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Design</span><span class="text-text-primary">65 tasks</span></div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-accent rounded-full" style="width: 50%;"></div></div>
-                                    </div>
-                                    <div>
-                                        <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Marketing</span><span class="text-text-primary">30 tasks</span></div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 20%;"></div></div>
-                                    </div>
+                                    <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Engineering</span><span class="text-text-primary">120 tasks</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-info rounded-full" style="width: 90%;"></div></div></div>
+                                    <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Design</span><span class="text-text-primary">65 tasks</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-accent rounded-full" style="width: 50%;"></div></div></div>
+                                    <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Marketing</span><span class="text-text-primary">30 tasks</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 20%;"></div></div></div>
                                 </div>
                             </div>
                             <div class="bg-bg-surface border border-subtle rounded-lg p-5">
                                 <h3 class="text-sm font-semibold text-text-primary mb-4">Project Count by Dept</h3>
                                 <div class="space-y-3">
-                                    <div>
-                                        <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Engineering</span><span class="text-text-primary">8 projects</span></div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 80%;"></div></div>
-                                    </div>
-                                    <div>
-                                        <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Design</span><span class="text-text-primary">4 projects</span></div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 40%;"></div></div>
-                                    </div>
-                                    <div>
-                                        <div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Marketing</span><span class="text-text-primary">3 projects</span></div>
-                                        <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 30%;"></div></div>
-                                    </div>
+                                    <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Engineering</span><span class="text-text-primary">8 projects</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 80%;"></div></div></div>
+                                    <div><div class="flex justify-between text-xs mb-1"><span class="text-text-secondary">Design</span><span class="text-text-primary">4 projects</span></div><div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 40%;"></div></div></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <!-- 8. SETTINGS VIEW -->
@@ -1202,33 +1133,17 @@
                         <p class="text-sm text-text-secondary mt-0.5">Manage your workspace and account preferences.</p>
                     </div>
                     <div class="grid grid-cols-3 gap-6">
-                        <!-- Settings Nav -->
                         <nav class="space-y-1">
                             <a href="#" class="block px-3 py-2 text-xs text-text-primary bg-bg-muted rounded-md font-medium">General</a>
                             <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Account</a>
                             <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Notifications</a>
-                            <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Integrations</a>
-                            <a href="#" class="block px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-base">Billing</a>
                         </nav>
-                        
-                        <!-- Settings Form -->
                         <div class="col-span-2 bg-bg-surface border border-subtle rounded-lg p-6">
                             <h2 class="text-sm font-semibold text-text-primary mb-4">Workspace Details</h2>
                             <div class="space-y-4">
                                 <div>
                                     <label for="ws-name" class="block text-xs font-medium text-text-secondary mb-1">Workspace Name</label>
                                     <input type="text" id="ws-name" value="Codex PM" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
-                                </div>
-                                <div>
-                                    <label for="ws-url" class="block text-xs font-medium text-text-secondary mb-1">Workspace URL</label>
-                                    <div class="flex">
-                                        <span class="inline-flex items-center px-3 h-8 bg-bg-muted border border-r-0 border-border-default rounded-l-sm text-xs text-text-muted">codex.io/</span>
-                                        <input type="text" id="ws-url" value="codex-pm" class="flex-1 h-8 bg-bg-app border border-border-default rounded-r-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="ws-desc" class="block text-xs font-medium text-text-secondary mb-1">Description</label>
-                                    <textarea id="ws-desc" rows="3" class="w-full bg-bg-app border border-border-default rounded-sm px-3 py-2 text-xs text-text-primary focus:border-accent focus:outline-none">Project management system for internal teams.</textarea>
                                 </div>
                                 <div class="pt-4 border-t border-subtle flex justify-end">
                                     <button onclick="showToast('Workspace settings saved!', 'success')" class="h-8 px-4 bg-accent hover:bg-accent-hover text-white text-xs font-semibold rounded-md transition-base">Save Changes</button>
@@ -1276,26 +1191,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-medium uppercase tracking-wider text-text-muted mb-1">Reporter</label>
-                    <div class="flex items-center space-x-1.5">
-                        <img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full" alt="Sarah">
-                        <span class="text-xs text-text-primary">Sarah J.</span>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-medium uppercase tracking-wider text-text-muted mb-1">Priority</label>
-                    <span class="badge badge-danger">Urgent</span>
-                </div>
-                <div>
                     <label class="block text-[10px] font-medium uppercase tracking-wider text-text-muted mb-1">Due Date</label>
                     <span class="text-xs text-text-primary">Oct 20, 2023</span>
-                </div>
-            </div>
-
-            <div class="mb-6">
-                <h3 class="text-xs font-semibold text-text-primary mb-2">Description</h3>
-                <div class="text-xs text-text-secondary leading-relaxed">
-                    Implement the full authentication flow including login, registration, password reset, and OAuth integration. Ensure JWT tokens are securely stored and refreshed.
                 </div>
             </div>
 
@@ -1317,38 +1214,6 @@
                         <img src="https://i.pravatar.cc/20?img=3" class="w-4 h-4 rounded-full" alt="Alex">
                     </div>
                 </div>
-                <button class="mt-2 text-xs text-text-muted hover:text-text-primary flex items-center space-x-1 transition-base">
-                    <i class="fa-solid fa-plus text-[10px]"></i><span>Add subtask</span>
-                </button>
-            </div>
-
-            <div>
-                <h3 class="text-xs font-semibold text-text-primary mb-2">Activity</h3>
-                <div class="space-y-3">
-                    <div class="flex space-x-2">
-                        <img src="https://i.pravatar.cc/20?img=3" class="w-5 h-5 rounded-full mt-0.5" alt="Alex">
-                        <div>
-                            <p class="text-xs text-text-primary"><span class="font-medium">Alex K.</span> changed status to <span class="text-info">In Progress</span></p>
-                            <p class="text-[10px] text-text-muted">2 hours ago</p>
-                        </div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full mt-0.5" alt="Sarah">
-                        <div>
-                            <p class="text-xs text-text-primary"><span class="font-medium">Sarah J.</span> created the task</p>
-                            <p class="text-[10px] text-text-muted">Yesterday</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="p-4 border-t border-subtle">
-            <div class="flex items-center space-x-2">
-                <input type="text" placeholder="Write a comment..." class="flex-1 h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary placeholder-text-muted focus:border-accent focus:outline-none">
-                <button class="w-8 h-8 flex items-center justify-center bg-accent hover:bg-accent-hover text-white rounded-sm transition-base" aria-label="Send">
-                    <i class="fa-solid fa-paper-plane text-xs"></i>
-                </button>
             </div>
         </div>
     </div>
@@ -1358,9 +1223,7 @@
         <div class="modal-content bg-bg-surface border border-subtle rounded-lg w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]">
             <div class="p-4 border-b border-subtle flex items-center justify-between">
                 <h2 class="text-sm font-semibold text-text-primary">Create New Task</h2>
-                <button onclick="closeCreateTaskModal()" class="action-btn" title="Close">
-                    <i class="fa-solid fa-xmark text-xs"></i>
-                </button>
+                <button onclick="closeCreateTaskModal()" class="action-btn" title="Close"><i class="fa-solid fa-xmark text-xs"></i></button>
             </div>
             
             <form id="create-task-form" onsubmit="handleCreateTaskSubmit(event)" class="p-4 overflow-y-auto flex-1 space-y-4">
@@ -1368,22 +1231,11 @@
                     <label for="task-title" class="block text-xs font-medium text-text-secondary mb-1">Title <span class="text-danger">*</span></label>
                     <input type="text" id="task-title" required class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="e.g. Implement login page">
                 </div>
-                <div>
-                    <label for="task-project" class="block text-xs font-medium text-text-secondary mb-1">Project <span class="text-danger">*</span></label>
-                    <select id="task-project" required class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
-                        <option value="Mobile App Redesign">Mobile App Redesign</option>
-                        <option value="API Migration v2">API Migration v2</option>
-                        <option value="Website Launch">Website Launch</option>
-                    </select>
-                </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="task-assignee" class="block text-xs font-medium text-text-secondary mb-1">Task Assignee</label>
-                        <select id="task-assignee" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
-                            <option>Alex K.</option>
-                            <option>Sarah J.</option>
-                            <option>Mark T.</option>
-                            <option>Nina P.</option>
+                        <select id="task-assignee" class="filter-select w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                            <option>Alex K.</option><option>Sarah J.</option><option>Mark T.</option><option>Nina P.</option>
                         </select>
                     </div>
                     <div>
@@ -1391,49 +1243,20 @@
                         <input type="date" id="task-due-date" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="task-status" class="block text-xs font-medium text-text-secondary mb-1">Status</label>
-                        <select id="task-status" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
-                            <option value="To Do">To Do</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Blocked">Blocked</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="task-priority" class="block text-xs font-medium text-text-secondary mb-1">Priority</label>
-                        <select id="task-priority" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
-                            <option value="Low">Low</option>
-                            <option value="Medium" selected>Medium</option>
-                            <option value="High">High</option>
-                            <option value="Urgent">Urgent</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label for="task-description" class="block text-xs font-medium text-text-secondary mb-1">Description</label>
-                    <textarea id="task-description" rows="2" class="w-full bg-bg-app border border-border-default rounded-sm px-3 py-2 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="Add more details..."></textarea>
-                </div>
-
+                
                 <!-- Subtasks Dynamic Section -->
                 <div class="pt-2 border-t border-subtle mt-4">
                     <label class="block text-xs font-medium text-text-secondary mb-2">Subtasks</label>
                     <div class="flex space-x-2 mb-2">
                         <input type="text" id="subtask-title" class="flex-1 h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="Subtask title...">
-                        <select id="subtask-assignee" class="w-32 h-8 bg-bg-app border border-border-default rounded-sm px-2 text-xs text-text-primary focus:border-accent focus:outline-none">
-                            <option>Alex K.</option>
-                            <option>Sarah J.</option>
-                            <option>Mark T.</option>
-                            <option>Nina P.</option>
+                        <select id="subtask-assignee" class="filter-select w-32 h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
+                            <option>Alex K.</option><option>Sarah J.</option><option>Mark T.</option><option>Nina P.</option>
                         </select>
                         <button type="button" onclick="addSubtaskToForm()" class="h-8 px-3 bg-bg-muted border border-border-default hover:bg-bg-elevated text-text-primary text-xs rounded-sm transition-base flex items-center">
                             <i class="fa-solid fa-plus text-[10px]"></i>
                         </button>
                     </div>
-                    <div id="subtasks-list-container" class="space-y-2">
-                        <!-- Subtask items injected here -->
-                    </div>
+                    <div id="subtasks-list-container" class="space-y-2"></div>
                 </div>
             </form>
             
@@ -1449,12 +1272,10 @@
         <div class="modal-content bg-bg-surface border border-subtle rounded-lg w-full max-w-sm shadow-2xl">
             <div class="p-5">
                 <div class="flex items-start space-x-3 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-danger bg-opacity-10 flex items-center justify-center flex-shrink-0">
-                        <i class="fa-solid fa-trash-can text-xs text-danger"></i>
-                    </div>
+                    <div class="w-8 h-8 rounded-full bg-danger bg-opacity-10 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-trash-can text-xs text-danger"></i></div>
                     <div>
                         <h2 class="text-sm font-semibold text-text-primary">Delete Task?</h2>
-                        <p id="delete-modal-text" class="text-xs text-text-secondary mt-1">This action cannot be undone. All related task links will be removed.</p>
+                        <p id="delete-modal-text" class="text-xs text-text-secondary mt-1">This action cannot be undone.</p>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-2">
@@ -1469,28 +1290,16 @@
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] space-y-2 w-80"></div>
 
     <script>
-        // --- State Management ---
-        // Structured like a React State object
+        // --- Mock Data with Dates for Calendar & Gantt ---
         let tasks = [
-            { 
-                id: 't1', 
-                title: 'Implement authentication flow', 
-                project: 'Mobile App Redesign', 
-                assignee: 'Alex K.', 
-                status: 'In Progress', 
-                priority: 'Urgent', 
-                dueDate: 'Oct 20, 2023',
-                subtasks: [
-                    { id: 's1', title: 'Create login UI', assignee: 'Sarah J.', completed: true },
-                    { id: 's2', title: 'Setup JWT backend logic', assignee: 'Alex K.', completed: false }
-                ]
-            },
-            { id: 't2', title: 'Provision AWS infrastructure', project: 'API Migration v2', assignee: 'Mark T.', status: 'To Do', priority: 'Low', dueDate: 'Oct 26, 2023', subtasks: [] },
-            { id: 't3', title: 'Create landing page copy', project: 'Website Launch', assignee: 'Nina P.', status: 'Completed', priority: 'Medium', dueDate: 'Oct 15, 2023', subtasks: [] },
+            { id: 't1', title: 'Implement authentication flow', project: 'Mobile App Redesign', assignee: 'Alex K.', status: 'In Progress', priority: 'Urgent', startDate: '2023-10-15', dueDate: '2023-10-20', subtasks: [] },
+            { id: 't2', title: 'Provision AWS infrastructure', project: 'API Migration v2', assignee: 'Mark T.', status: 'To Do', priority: 'Low', startDate: '2023-10-22', dueDate: '2023-10-26', subtasks: [] },
+            { id: 't3', title: 'Create landing page copy', project: 'Website Launch', assignee: 'Nina P.', status: 'Completed', priority: 'Medium', startDate: '2023-10-10', dueDate: '2023-10-15', subtasks: [] },
+            { id: 't4', title: 'Design dashboard UI components', project: 'Mobile App Redesign', assignee: 'Sarah J.', status: 'Completed', priority: 'Medium', startDate: '2023-10-12', dueDate: '2023-10-18', subtasks: [] },
+            { id: 't5', title: 'Set up CI/CD pipeline', project: 'Mobile App Redesign', assignee: 'Mark T.', status: 'To Do', priority: 'Low', startDate: '2023-10-24', dueDate: '2023-10-28', subtasks: [] },
         ];
-        
         let pendingDeleteId = null;
-        let tempSubtasks = []; // Temporary state for the create modal
+        let tempSubtasks = [];
 
         // --- Helper Functions ---
         function getBadgeClass(type, value) {
@@ -1508,6 +1317,11 @@
                 return 'badge-muted';
             }
             return 'badge-muted';
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
         }
 
         // --- Routing ---
@@ -1536,6 +1350,10 @@
             if (route === 'tasks' || route === 'project-detail') {
                 renderTasks();
             }
+            if (route === 'project-detail') {
+                renderCalendar();
+                renderGantt();
+            }
         }
 
         document.querySelectorAll('[data-route]').forEach(link => {
@@ -1557,6 +1375,10 @@
                 
                 document.querySelectorAll('.proj-tab-content').forEach(c => c.classList.add('hidden'));
                 document.getElementById(`proj-tab-${tab.getAttribute('data-tab')}`).classList.remove('hidden');
+                
+                // Re-render dynamic views if needed
+                if (tab.getAttribute('data-tab') === 'calendar') renderCalendar();
+                if (tab.getAttribute('data-tab') === 'gantt') renderGantt();
             });
         });
 
@@ -1565,7 +1387,6 @@
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                
                 document.querySelectorAll('.report-content').forEach(c => c.classList.add('hidden'));
                 document.getElementById(`report-${tab.getAttribute('data-report')}`).classList.remove('hidden');
             });
@@ -1583,7 +1404,7 @@
 
         // --- Create Task Modal & Subtasks ---
         function openCreateTaskModal() {
-            tempSubtasks = []; // Reset temp subtasks
+            tempSubtasks = []; 
             renderTempSubtasks();
             document.getElementById('create-task-modal').classList.add('open');
             document.getElementById('task-title').focus();
@@ -1593,33 +1414,19 @@
             document.getElementById('create-task-form').reset();
             tempSubtasks = [];
         }
-        
         function addSubtaskToForm() {
             const titleInput = document.getElementById('subtask-title');
             const assigneeSelect = document.getElementById('subtask-assignee');
             const title = titleInput.value.trim();
-            
-            if (!title) {
-                showToast('Please enter a subtask title', 'warning');
-                return;
-            }
-
-            tempSubtasks.push({
-                id: 's' + Math.random().toString(36).substr(2, 9),
-                title: title,
-                assignee: assigneeSelect.value,
-                completed: false
-            });
-
+            if (!title) { showToast('Please enter a subtask title', 'warning'); return; }
+            tempSubtasks.push({ id: 's' + Math.random().toString(36).substr(2, 9), title, assignee: assigneeSelect.value, completed: false });
             titleInput.value = '';
             renderTempSubtasks();
         }
-
         function removeSubtaskFromForm(id) {
             tempSubtasks = tempSubtasks.filter(s => s.id !== id);
             renderTempSubtasks();
         }
-
         function renderTempSubtasks() {
             const container = document.getElementById('subtasks-list-container');
             container.innerHTML = '';
@@ -1637,36 +1444,26 @@
                             <img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${st.assignee}">
                             <span class="text-[10px] text-text-muted">${st.assignee}</span>
                         </div>
-                        <button type="button" onclick="removeSubtaskFromForm('${st.id}')" class="action-btn danger" title="Remove">
-                            <i class="fa-solid fa-xmark text-[10px]"></i>
-                        </button>
+                        <button type="button" onclick="removeSubtaskFromForm('${st.id}')" class="action-btn danger" title="Remove"><i class="fa-solid fa-xmark text-[10px]"></i></button>
                     </div>
                 `;
                 container.appendChild(row);
             });
         }
-
         function handleCreateTaskSubmit(e) {
             e.preventDefault();
             const title = document.getElementById('task-title').value;
-            const project = document.getElementById('task-project').value;
+            const project = 'Mobile App Redesign'; // Default for this view context
             const assignee = document.getElementById('task-assignee').value;
-            const dueDate = document.getElementById('task-due-date').value || 'No date';
-            const status = document.getElementById('task-status').value;
-            const priority = document.getElementById('task-priority').value;
-
-            const formattedDate = dueDate !== 'No date' ? new Date(dueDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : 'No date';
-
-            const newTask = {
-                id: 't' + Math.random().toString(36).substr(2, 9),
-                title, project, assignee, status, priority,
-                dueDate: formattedDate,
-                subtasks: [...tempSubtasks] // Clone the array
-            };
-
+            const dueDate = document.getElementById('task-due-date').value || '2023-10-30'; // Default mock date
+            const status = 'To Do';
+            const priority = 'Medium';
+            const newTask = { id: 't' + Math.random().toString(36).substr(2, 9), title, project, assignee, status, priority, startDate: '2023-10-15', dueDate, subtasks: [...tempSubtasks] };
             tasks.push(newTask);
             closeCreateTaskModal();
             renderTasks();
+            renderCalendar();
+            renderGantt();
             updateKPIs();
             showToast(`Task "${title}" created successfully!`, 'success');
             triggerNotifDot();
@@ -1676,9 +1473,7 @@
         function openDeleteModal(taskId) {
             pendingDeleteId = taskId;
             const task = tasks.find(t => t.id === taskId);
-            if (task) {
-                document.getElementById('delete-modal-text').innerText = `Are you sure you want to delete "${task.title}"? This action cannot be undone.`;
-            }
+            if (task) document.getElementById('delete-modal-text').innerText = `Are you sure you want to delete "${task.title}"? This action cannot be undone.`;
             document.getElementById('delete-modal').classList.add('open');
         }
         function closeDeleteModal() {
@@ -1692,6 +1487,8 @@
                     const deletedTitle = tasks[taskIndex].title;
                     tasks.splice(taskIndex, 1);
                     renderTasks();
+                    renderCalendar();
+                    renderGantt();
                     updateKPIs();
                     showToast(`Task "${deletedTitle}" deleted.`, 'danger');
                 }
@@ -1700,57 +1497,39 @@
         });
 
         // --- Render Tasks Table (Global & Project Detail) ---
-        // This is structured to mimic a React component rendering list items
         function renderTasks() {
             const globalBody = document.getElementById('global-tasks-body');
             const projectBody = document.getElementById('project-tasks-body');
-            
             const searchQuery = document.getElementById('task-search')?.value.toLowerCase() || '';
             const filterProject = document.getElementById('task-filter-project')?.value || '';
             const filterStatus = document.getElementById('task-filter-status')?.value || '';
-
             const filteredTasks = tasks.filter(t => {
                 return (t.title.toLowerCase().includes(searchQuery) || t.assignee.toLowerCase().includes(searchQuery)) &&
                        (filterProject === '' || t.project === filterProject) &&
                        (filterStatus === '' || t.status === filterStatus);
             });
-
-            // Render Global Tasks Table
             if (globalBody) {
                 globalBody.innerHTML = '';
                 if (filteredTasks.length === 0) {
-                    globalBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-text-muted text-xs">No tasks found. Try adjusting your filters or create a new task.</td></tr>`;
+                    globalBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-text-muted text-xs">No tasks found.</td></tr>`;
                 } else {
-                    filteredTasks.forEach(task => {
-                        globalBody.innerHTML += createTaskRowHTML(task);
-                    });
+                    filteredTasks.forEach(task => globalBody.innerHTML += createTaskRowHTML(task, false));
                 }
             }
-
-            // Render Project Detail Tasks Table
             if (projectBody) {
                 projectBody.innerHTML = '';
                 const projectTasks = tasks.filter(t => t.project === 'Mobile App Redesign');
                 if (projectTasks.length === 0) {
-                    projectBody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-text-muted text-xs">No tasks in this project yet. Click "Add Task" to get started.</td></tr>`;
+                    projectBody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-text-muted text-xs">No tasks in this project yet.</td></tr>`;
                 } else {
-                    projectTasks.forEach(task => {
-                        projectBody.innerHTML += createTaskRowHTML(task, true);
-                    });
+                    projectTasks.forEach(task => projectBody.innerHTML += createTaskRowHTML(task, true));
                 }
             }
         }
-
-        // Helper to generate row HTML, mimicking a React sub-component
         function createTaskRowHTML(task, isProjectView = false) {
             const assigneeImg = `https://i.pravatar.cc/20?img=${task.assignee === 'Alex K.' ? 3 : task.assignee === 'Sarah J.' ? 5 : task.assignee === 'Mark T.' ? 8 : 16}`;
-            const subtaskBadge = task.subtasks && task.subtasks.length > 0 
-                ? `<span class="ml-2 text-[9px] text-text-muted bg-bg-muted px-1 py-0.5 rounded-sm inline-flex items-center" title="${task.subtasks.length} subtasks"><i class="fa-solid fa-list-ul mr-1 text-[8px]"></i>${task.subtasks.length}</span>` 
-                : '';
-            
+            const subtaskBadge = task.subtasks && task.subtasks.length > 0 ? `<span class="ml-2 text-[9px] text-text-muted bg-bg-muted px-1 py-0.5 rounded-sm inline-flex items-center" title="${task.subtasks.length} subtasks"><i class="fa-solid fa-list-ul mr-1 text-[8px]"></i>${task.subtasks.length}</span>` : '';
             const projectCell = isProjectView ? '' : `<td class="py-2.5 px-2 text-text-secondary">${task.project}</td>`;
-            const colspan = isProjectView ? 7 : 8;
-
             return `
                 <tr class="hover:bg-bg-elevated transition-base group">
                     <td class="py-2.5 pl-4 pr-2"><input type="checkbox" class="rounded"></td>
@@ -1758,12 +1537,7 @@
                         ${task.title} ${subtaskBadge}
                     </td>
                     ${projectCell}
-                    <td class="py-2.5 px-2">
-                        <div class="flex items-center space-x-1.5">
-                            <img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${task.assignee}">
-                            <span class="text-text-secondary">${task.assignee}</span>
-                        </div>
-                    </td>
+                    <td class="py-2.5 px-2"><div class="flex items-center space-x-1.5"><img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${task.assignee}"><span class="text-text-secondary">${task.assignee}</span></div></td>
                     <td class="py-2.5 px-2">
                         <select onchange="updateTaskStatus('${task.id}', this.value)" class="bg-transparent text-text-secondary text-xs border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm cursor-pointer hover:text-text-primary">
                             <option ${task.status === 'To Do' ? 'selected' : ''}>To Do</option>
@@ -1773,7 +1547,7 @@
                         </select>
                     </td>
                     <td class="py-2.5 px-2"><span class="badge ${getBadgeClass('priority', task.priority)}">${task.priority}</span></td>
-                    <td class="py-2.5 px-2 text-text-secondary">${task.dueDate}</td>
+                    <td class="py-2.5 px-2 text-text-secondary">${formatDate(task.dueDate)}</td>
                     <td class="py-2.5 pr-4 text-right">
                         <div class="flex items-center justify-end space-x-1 opacity-50 group-hover:opacity-100 transition-opacity">
                             <button onclick="openTaskDrawer()" class="action-btn" title="View/Edit"><i class="fa-solid fa-eye text-[10px]"></i></button>
@@ -1784,7 +1558,6 @@
                 </tr>
             `;
         }
-
         function updateTaskStatus(id, newStatus) {
             const task = tasks.find(t => t.id === id);
             if (task) {
@@ -1793,57 +1566,133 @@
                 renderTasks(); 
             }
         }
-
         function updateKPIs() {
             const activeTasks = tasks.filter(t => t.status !== 'Completed').length;
             const kpiElement = document.getElementById('kpi-active-tasks');
-            if (kpiElement) {
-                kpiElement.innerText = activeTasks;
+            if (kpiElement) kpiElement.innerText = activeTasks;
+        }
+
+        // --- Calendar View Rendering ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            const year = 2023, month = 9; // Oct 2023 (0-indexed)
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Empty cells before the 1st
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="cal-day-cell bg-bg-app/30"></div>`;
             }
+            
+            // Day cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `2023-10-${String(day).padStart(2, '0')}`;
+                const dayTasks = tasks.filter(t => t.dueDate === dateStr);
+                let tasksHtml = '';
+                dayTasks.forEach(t => {
+                    const badgeClass = t.status === 'Completed' ? 'bg-success/20 text-success border-l-2 border-success' 
+                                     : t.status === 'In Progress' ? 'bg-info/20 text-info border-l-2 border-info'
+                                     : 'bg-warning/20 text-warning border-l-2 border-warning';
+                    tasksHtml += `<div class="cal-task-pill ${badgeClass}" onclick="openTaskDrawer()">${t.title}</div>`;
+                });
+                
+                const isToday = day === 20; // Just to highlight a mock "today"
+                grid.innerHTML += `
+                    <div class="cal-day-cell bg-bg-surface hover:bg-bg-elevated transition-base flex flex-col">
+                        <span class="text-[10px] ${isToday ? 'bg-accent text-white rounded-full w-4 h-4 flex items-center justify-center font-semibold' : 'text-text-muted'}">${day}</span>
+                        <div class="mt-1 space-y-1 flex-1">${tasksHtml}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- Gantt Chart Rendering ---
+        function renderGantt() {
+            const grid = document.getElementById('gantt-grid');
+            if (!grid) return;
+            
+            // Clear existing rows except header
+            const headerDates = document.getElementById('gantt-header-dates');
+            headerDates.innerHTML = '';
+            
+            const projectTasks = tasks.filter(t => t.project === 'Mobile App Redesign');
+            const startDay = 15; // Mock start scope (Oct 15)
+            const endDay = 31;   // Mock end scope (Oct 31)
+            const totalDays = endDay - startDay + 1;
+            const dayWidth = 40; // pixels
+            
+            // Render header dates
+            for (let i = 0; i < totalDays; i++) {
+                const day = startDay + i;
+                const dayDate = new Date(2023, 9, day);
+                const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
+                headerDates.innerHTML += `
+                    <div class="flex-1 border-r border-subtle ${isWeekend ? 'bg-bg-muted/50' : ''} flex items-center justify-center text-[9px] text-text-muted">
+                        ${day}
+                    </div>
+                `;
+            }
+            
+            // Remove old rows
+            const oldRows = grid.querySelectorAll('.gantt-row');
+            oldRows.forEach(r => r.remove());
+            
+            // Render task rows
+            projectTasks.forEach(task => {
+                const taskStart = new Date(task.startDate);
+                const taskEnd = new Date(task.dueDate);
+                const scopeStart = new Date(2023, 9, startDay);
+                
+                const offsetDays = Math.floor((taskStart - scopeStart) / (1000 * 60 * 60 * 24));
+                const durationDays = Math.floor((taskEnd - taskStart) / (1000 * 60 * 60 * 24)) + 1;
+                
+                const leftPx = offsetDays * dayWidth;
+                const widthPx = durationDays * dayWidth - 4; // -4 for padding/gap
+                
+                const barClass = task.status === 'Completed' ? 'completed' : task.status === 'Blocked' ? 'blocked' : '';
+                
+                const rowHTML = `
+                    <div class="gantt-row contents">
+                        <div class="gantt-task-name">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                                <span class="truncate">${task.title}</span>
+                            </div>
+                        </div>
+                        <div class="gantt-timeline-cell">
+                            <div class="gantt-bar ${barClass}" style="left: ${leftPx + 2}px; width: ${widthPx}px;" onclick="openTaskDrawer()" title="${task.title} (${task.assignee})">
+                                ${task.assignee}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', rowHTML);
+            });
         }
 
         // --- Toast Notifications ---
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            
-            let iconClass = 'fa-circle-info text-info';
-            let borderClass = 'border-l-info';
-            if (type === 'success') {
-                iconClass = 'fa-circle-check text-success';
-                borderClass = 'border-l-success';
-            } else if (type === 'danger') {
-                iconClass = 'fa-circle-exclamation text-danger';
-                borderClass = 'border-l-danger';
-            } else if (type === 'warning') {
-                iconClass = 'fa-triangle-exclamation text-warning';
-                borderClass = 'border-l-warning';
-            }
-
+            let iconClass = 'fa-circle-info text-info', borderClass = 'border-l-info';
+            if (type === 'success') { iconClass = 'fa-circle-check text-success'; borderClass = 'border-l-success'; }
+            else if (type === 'danger') { iconClass = 'fa-circle-exclamation text-danger'; borderClass = 'border-l-danger'; }
+            else if (type === 'warning') { iconClass = 'fa-triangle-exclamation text-warning'; borderClass = 'border-l-warning'; }
             toast.className = `toast bg-bg-surface border border-subtle border-l-4 ${borderClass} rounded-md shadow-xl p-3 flex items-start space-x-3`;
             toast.innerHTML = `
                 <i class="fa-solid ${iconClass} text-sm mt-0.5"></i>
-                <div class="flex-1">
-                    <p class="text-xs text-text-primary font-medium">${message}</p>
-                </div>
-                <button class="text-text-muted hover:text-text-primary" onclick="this.parentElement.remove()">
-                    <i class="fa-solid fa-xmark text-[10px]"></i>
-                </button>
+                <div class="flex-1"><p class="text-xs text-text-primary font-medium">${message}</p></div>
+                <button class="text-text-muted hover:text-text-primary" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark text-[10px]"></i></button>
             `;
-            
             container.appendChild(toast);
-            
             setTimeout(() => toast.classList.add('show'), 10);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
         function triggerNotifDot() {
-            const dot = document.getElementById('notif-dot');
-            dot.classList.remove('hidden');
+            document.getElementById('notif-dot').classList.remove('hidden');
         }
 
         document.getElementById('bell-btn').addEventListener('click', () => {
@@ -1860,7 +1709,6 @@
         const themeToggle = document.getElementById('theme-toggle');
         const htmlElement = document.documentElement;
         const themeIcon = themeToggle.querySelector('i');
-
         themeToggle.addEventListener('click', () => {
             if (htmlElement.classList.contains('dark')) {
                 htmlElement.classList.remove('dark');
@@ -1879,9 +1727,10 @@
 
         // --- Init ---
         renderTasks();
+        renderCalendar();
+        renderGantt();
         updateKPIs();
         navigate('dashboard');
-
     </script>
 </body>
 </html>
