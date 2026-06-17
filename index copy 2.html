@@ -162,26 +162,6 @@
             color: var(--color-text-primary);
             font-weight: 600;
         }
-
-        /* Action Button Group (React-friendly approach) */
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            color: var(--color-text-muted);
-            transition: background-color 150ms ease, color 150ms ease;
-        }
-        .action-btn:hover {
-            background-color: var(--color-bg-muted);
-            color: var(--color-text-primary);
-        }
-        .action-btn.danger:hover {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--color-danger);
-        }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
@@ -512,8 +492,8 @@
                                     <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
                                     <td class="py-2.5 px-2 text-text-muted">2 days ago</td>
                                     <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-bg-elevated transition-base">
@@ -525,8 +505,8 @@
                                     <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
                                     <td class="py-2.5 px-2 text-text-muted">5 days ago</td>
                                     <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-bg-elevated transition-base">
@@ -538,8 +518,8 @@
                                     <td class="py-2.5 px-2"><span class="badge badge-muted">Inactive</span></td>
                                     <td class="py-2.5 px-2 text-text-muted">1 month ago</td>
                                     <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -600,9 +580,8 @@
                                     <td class="py-2.5 px-2"><span class="badge badge-danger">Urgent</span></td>
                                     <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-success rounded-full" style="width: 85%;"></div></div><span class="text-text-muted text-[10px]">85%</span></div></td>
                                     <td class="py-2.5 px-2 text-text-secondary">Oct 24, 2023</td>
-                                    <td class="py-2.5 px-4 text-right" onclick="event.stopPropagation()">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                    <td class="py-2.5 px-4 text-right">
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-ellipsis text-[10px]"></i></button>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-bg-elevated transition-base">
@@ -617,8 +596,7 @@
                                     <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-warning rounded-full" style="width: 45%;"></div></div><span class="text-text-muted text-[10px]">45%</span></div></td>
                                     <td class="py-2.5 px-2 text-text-secondary">Nov 15, 2023</td>
                                     <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-ellipsis text-[10px]"></i></button>
                                     </td>
                                 </tr>
                                 <tr class="hover:bg-bg-elevated transition-base">
@@ -633,8 +611,7 @@
                                     <td class="py-2.5 px-2"><div class="flex items-center space-x-2"><div class="w-16 h-1 bg-bg-muted rounded-full overflow-hidden"><div class="h-full bg-danger rounded-full" style="width: 20%;"></div></div><span class="text-text-muted text-[10px]">20%</span></div></td>
                                     <td class="py-2.5 px-2 text-text-secondary">Dec 01, 2023</td>
                                     <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                        <button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-ellipsis text-[10px]"></i></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -909,10 +886,7 @@
                                     <td class="py-2.5 px-2 text-text-secondary">Engineering</td>
                                     <td class="py-2.5 px-2"><span class="badge badge-accent">Super Admin</span></td>
                                     <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
-                                    <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                                    </td>
+                                    <td class="py-2.5 px-4 text-right"><button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button><button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button></td>
                                 </tr>
                                 <tr class="hover:bg-bg-elevated transition-base">
                                     <td class="py-2.5 px-4"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=5" class="w-5 h-5 rounded-full" alt="Sarah"><span class="text-text-primary font-medium">Sarah Johnson</span></div></td>
@@ -920,10 +894,7 @@
                                     <td class="py-2.5 px-2 text-text-secondary">Design</td>
                                     <td class="py-2.5 px-2"><span class="badge badge-info">Admin</span></td>
                                     <td class="py-2.5 px-2"><span class="badge badge-success">Active</span></td>
-                                    <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                                    </td>
+                                    <td class="py-2.5 px-4 text-right"><button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button><button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button></td>
                                 </tr>
                                 <tr class="hover:bg-bg-elevated transition-base">
                                     <td class="py-2.5 px-4"><div class="flex items-center space-x-2"><img src="https://i.pravatar.cc/20?img=8" class="w-5 h-5 rounded-full" alt="Mark"><span class="text-text-primary font-medium">Mark Thompson</span></div></td>
@@ -931,10 +902,7 @@
                                     <td class="py-2.5 px-2 text-text-secondary">Marketing</td>
                                     <td class="py-2.5 px-2"><span class="badge badge-muted">Member</span></td>
                                     <td class="py-2.5 px-2"><span class="badge badge-warning">Invited</span></td>
-                                    <td class="py-2.5 px-4 text-right">
-                                        <button class="action-btn" title="Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                        <button class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                                    </td>
+                                    <td class="py-2.5 px-4 text-right"><button class="text-text-muted hover:text-text-primary px-1"><i class="fa-solid fa-pen text-[10px]"></i></button><button class="text-text-muted hover:text-danger px-1"><i class="fa-solid fa-trash text-[10px]"></i></button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1251,8 +1219,12 @@
                 <span class="text-xs text-text-secondary">Mobile App Redesign</span>
             </div>
             <div class="flex items-center space-x-1">
-                <button class="action-btn" title="More"><i class="fa-solid fa-ellipsis text-xs"></i></button>
-                <button onclick="closeTaskDrawer()" class="action-btn" title="Close"><i class="fa-solid fa-xmark text-xs"></i></button>
+                <button class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="More">
+                    <i class="fa-solid fa-ellipsis text-xs"></i>
+                </button>
+                <button onclick="closeTaskDrawer()" class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="Close">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
             </div>
         </div>
         
@@ -1300,21 +1272,19 @@
             </div>
 
             <div class="mb-6">
-                <h3 class="text-xs font-semibold text-text-primary mb-2">Subtasks (2)</h3>
+                <h3 class="text-xs font-semibold text-text-primary mb-2">Subtasks</h3>
                 <div class="space-y-1">
-                    <div class="flex items-center justify-between p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" checked class="rounded">
-                            <span class="text-xs text-text-muted line-through">Create login UI</span>
-                        </div>
-                        <img src="https://i.pravatar.cc/20?img=5" class="w-4 h-4 rounded-full" alt="Sarah">
+                    <div class="flex items-center space-x-2 p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
+                        <input type="checkbox" checked class="rounded">
+                        <span class="text-xs text-text-muted line-through">Create login UI</span>
                     </div>
-                    <div class="flex items-center justify-between p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" class="rounded">
-                            <span class="text-xs text-text-secondary">Setup JWT backend logic</span>
-                        </div>
-                        <img src="https://i.pravatar.cc/20?img=3" class="w-4 h-4 rounded-full" alt="Alex">
+                    <div class="flex items-center space-x-2 p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
+                        <input type="checkbox" class="rounded">
+                        <span class="text-xs text-text-secondary">Setup JWT backend logic</span>
+                    </div>
+                    <div class="flex items-center space-x-2 p-1.5 hover:bg-bg-elevated rounded-sm transition-base">
+                        <input type="checkbox" class="rounded">
+                        <span class="text-xs text-text-secondary">Implement OAuth Google login</span>
                     </div>
                 </div>
                 <button class="mt-2 text-xs text-text-muted hover:text-text-primary flex items-center space-x-1 transition-base">
@@ -1358,7 +1328,7 @@
         <div class="modal-content bg-bg-surface border border-subtle rounded-lg w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]">
             <div class="p-4 border-b border-subtle flex items-center justify-between">
                 <h2 class="text-sm font-semibold text-text-primary">Create New Task</h2>
-                <button onclick="closeCreateTaskModal()" class="action-btn" title="Close">
+                <button onclick="closeCreateTaskModal()" class="w-7 h-7 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-muted rounded-sm transition-base" aria-label="Close">
                     <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
             </div>
@@ -1378,7 +1348,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="task-assignee" class="block text-xs font-medium text-text-secondary mb-1">Task Assignee</label>
+                        <label for="task-assignee" class="block text-xs font-medium text-text-secondary mb-1">Assignee</label>
                         <select id="task-assignee" class="w-full h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none">
                             <option>Alex K.</option>
                             <option>Sarah J.</option>
@@ -1413,27 +1383,7 @@
                 </div>
                 <div>
                     <label for="task-description" class="block text-xs font-medium text-text-secondary mb-1">Description</label>
-                    <textarea id="task-description" rows="2" class="w-full bg-bg-app border border-border-default rounded-sm px-3 py-2 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="Add more details..."></textarea>
-                </div>
-
-                <!-- Subtasks Dynamic Section -->
-                <div class="pt-2 border-t border-subtle mt-4">
-                    <label class="block text-xs font-medium text-text-secondary mb-2">Subtasks</label>
-                    <div class="flex space-x-2 mb-2">
-                        <input type="text" id="subtask-title" class="flex-1 h-8 bg-bg-app border border-border-default rounded-sm px-3 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="Subtask title...">
-                        <select id="subtask-assignee" class="w-32 h-8 bg-bg-app border border-border-default rounded-sm px-2 text-xs text-text-primary focus:border-accent focus:outline-none">
-                            <option>Alex K.</option>
-                            <option>Sarah J.</option>
-                            <option>Mark T.</option>
-                            <option>Nina P.</option>
-                        </select>
-                        <button type="button" onclick="addSubtaskToForm()" class="h-8 px-3 bg-bg-muted border border-border-default hover:bg-bg-elevated text-text-primary text-xs rounded-sm transition-base flex items-center">
-                            <i class="fa-solid fa-plus text-[10px]"></i>
-                        </button>
-                    </div>
-                    <div id="subtasks-list-container" class="space-y-2">
-                        <!-- Subtask items injected here -->
-                    </div>
+                    <textarea id="task-description" rows="3" class="w-full bg-bg-app border border-border-default rounded-sm px-3 py-2 text-xs text-text-primary focus:border-accent focus:outline-none" placeholder="Add more details..."></textarea>
                 </div>
             </form>
             
@@ -1470,27 +1420,13 @@
 
     <script>
         // --- State Management ---
-        // Structured like a React State object
         let tasks = [
-            { 
-                id: 't1', 
-                title: 'Implement authentication flow', 
-                project: 'Mobile App Redesign', 
-                assignee: 'Alex K.', 
-                status: 'In Progress', 
-                priority: 'Urgent', 
-                dueDate: 'Oct 20, 2023',
-                subtasks: [
-                    { id: 's1', title: 'Create login UI', assignee: 'Sarah J.', completed: true },
-                    { id: 's2', title: 'Setup JWT backend logic', assignee: 'Alex K.', completed: false }
-                ]
-            },
-            { id: 't2', title: 'Provision AWS infrastructure', project: 'API Migration v2', assignee: 'Mark T.', status: 'To Do', priority: 'Low', dueDate: 'Oct 26, 2023', subtasks: [] },
-            { id: 't3', title: 'Create landing page copy', project: 'Website Launch', assignee: 'Nina P.', status: 'Completed', priority: 'Medium', dueDate: 'Oct 15, 2023', subtasks: [] },
+            { id: 't1', title: 'Implement authentication flow', project: 'Mobile App Redesign', assignee: 'Alex K.', status: 'In Progress', priority: 'Urgent', dueDate: 'Oct 20, 2023' },
+            { id: 't2', title: 'Provision AWS infrastructure', project: 'API Migration v2', assignee: 'Mark T.', status: 'To Do', priority: 'Low', dueDate: 'Oct 26, 2023' },
+            { id: 't3', title: 'Create landing page copy', project: 'Website Launch', assignee: 'Nina P.', status: 'Completed', priority: 'Medium', dueDate: 'Oct 15, 2023' },
         ];
         
         let pendingDeleteId = null;
-        let tempSubtasks = []; // Temporary state for the create modal
 
         // --- Helper Functions ---
         function getBadgeClass(type, value) {
@@ -1533,6 +1469,7 @@
             
             document.getElementById('main-content').scrollTop = 0;
 
+            // Re-render dynamic content if navigating to those views
             if (route === 'tasks' || route === 'project-detail') {
                 renderTasks();
             }
@@ -1581,71 +1518,15 @@
             document.getElementById('task-drawer').classList.remove('open');
         }
 
-        // --- Create Task Modal & Subtasks ---
+        // --- Create Task Modal ---
         function openCreateTaskModal() {
-            tempSubtasks = []; // Reset temp subtasks
-            renderTempSubtasks();
             document.getElementById('create-task-modal').classList.add('open');
             document.getElementById('task-title').focus();
         }
         function closeCreateTaskModal() {
             document.getElementById('create-task-modal').classList.remove('open');
             document.getElementById('create-task-form').reset();
-            tempSubtasks = [];
         }
-        
-        function addSubtaskToForm() {
-            const titleInput = document.getElementById('subtask-title');
-            const assigneeSelect = document.getElementById('subtask-assignee');
-            const title = titleInput.value.trim();
-            
-            if (!title) {
-                showToast('Please enter a subtask title', 'warning');
-                return;
-            }
-
-            tempSubtasks.push({
-                id: 's' + Math.random().toString(36).substr(2, 9),
-                title: title,
-                assignee: assigneeSelect.value,
-                completed: false
-            });
-
-            titleInput.value = '';
-            renderTempSubtasks();
-        }
-
-        function removeSubtaskFromForm(id) {
-            tempSubtasks = tempSubtasks.filter(s => s.id !== id);
-            renderTempSubtasks();
-        }
-
-        function renderTempSubtasks() {
-            const container = document.getElementById('subtasks-list-container');
-            container.innerHTML = '';
-            tempSubtasks.forEach(st => {
-                const assigneeImg = `https://i.pravatar.cc/20?img=${st.assignee === 'Alex K.' ? 3 : st.assignee === 'Sarah J.' ? 5 : st.assignee === 'Mark T.' ? 8 : 16}`;
-                const row = document.createElement('div');
-                row.className = 'flex items-center justify-between bg-bg-app border border-subtle rounded-sm p-2';
-                row.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-list-ul text-[10px] text-text-muted"></i>
-                        <span class="text-xs text-text-primary">${st.title}</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex items-center space-x-1.5">
-                            <img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${st.assignee}">
-                            <span class="text-[10px] text-text-muted">${st.assignee}</span>
-                        </div>
-                        <button type="button" onclick="removeSubtaskFromForm('${st.id}')" class="action-btn danger" title="Remove">
-                            <i class="fa-solid fa-xmark text-[10px]"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
-        }
-
         function handleCreateTaskSubmit(e) {
             e.preventDefault();
             const title = document.getElementById('task-title').value;
@@ -1660,8 +1541,7 @@
             const newTask = {
                 id: 't' + Math.random().toString(36).substr(2, 9),
                 title, project, assignee, status, priority,
-                dueDate: formattedDate,
-                subtasks: [...tempSubtasks] // Clone the array
+                dueDate: formattedDate
             };
 
             tasks.push(newTask);
@@ -1700,11 +1580,11 @@
         });
 
         // --- Render Tasks Table (Global & Project Detail) ---
-        // This is structured to mimic a React component rendering list items
         function renderTasks() {
             const globalBody = document.getElementById('global-tasks-body');
             const projectBody = document.getElementById('project-tasks-body');
             
+            // Filters only apply to global view visually in this mockup, but data is shared
             const searchQuery = document.getElementById('task-search')?.value.toLowerCase() || '';
             const filterProject = document.getElementById('task-filter-project')?.value || '';
             const filterStatus = document.getElementById('task-filter-status')?.value || '';
@@ -1722,12 +1602,34 @@
                     globalBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-text-muted text-xs">No tasks found. Try adjusting your filters or create a new task.</td></tr>`;
                 } else {
                     filteredTasks.forEach(task => {
-                        globalBody.innerHTML += createTaskRowHTML(task);
+                        const assigneeImg = `https://i.pravatar.cc/20?img=${task.assignee === 'Alex K.' ? 3 : task.assignee === 'Sarah J.' ? 5 : task.assignee === 'Mark T.' ? 8 : 16}`;
+                        const row = `
+                            <tr class="hover:bg-bg-elevated transition-base group">
+                                <td class="py-2.5 pl-4 pr-2"><input type="checkbox" class="rounded"></td>
+                                <td class="py-2.5 px-2 text-text-primary font-medium cursor-pointer hover:text-accent" onclick="openTaskDrawer()">${task.title}</td>
+                                <td class="py-2.5 px-2 text-text-secondary">${task.project}</td>
+                                <td class="py-2.5 px-2"><div class="flex items-center space-x-1.5"><img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${task.assignee}"><span class="text-text-secondary">${task.assignee}</span></div></td>
+                                <td class="py-2.5 px-2">
+                                    <select onchange="updateTaskStatus('${task.id}', this.value)" class="bg-transparent text-text-secondary text-xs border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm cursor-pointer hover:text-text-primary">
+                                        <option ${task.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                                        <option ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                        <option ${task.status === 'Blocked' ? 'selected' : ''}>Blocked</option>
+                                        <option ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                    </select>
+                                </td>
+                                <td class="py-2.5 px-2"><span class="badge ${getBadgeClass('priority', task.priority)}">${task.priority}</span></td>
+                                <td class="py-2.5 px-2 text-text-secondary">${task.dueDate}</td>
+                                <td class="py-2.5 pr-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="openDeleteModal('${task.id}')" class="text-text-muted hover:text-danger px-1" aria-label="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        globalBody.innerHTML += row;
                     });
                 }
             }
 
-            // Render Project Detail Tasks Table
+            // Render Project Detail Tasks Table (Only tasks for "Mobile App Redesign")
             if (projectBody) {
                 projectBody.innerHTML = '';
                 const projectTasks = tasks.filter(t => t.project === 'Mobile App Redesign');
@@ -1735,54 +1637,31 @@
                     projectBody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-text-muted text-xs">No tasks in this project yet. Click "Add Task" to get started.</td></tr>`;
                 } else {
                     projectTasks.forEach(task => {
-                        projectBody.innerHTML += createTaskRowHTML(task, true);
+                        const assigneeImg = `https://i.pravatar.cc/20?img=${task.assignee === 'Alex K.' ? 3 : task.assignee === 'Sarah J.' ? 5 : task.assignee === 'Mark T.' ? 8 : 16}`;
+                        const row = `
+                            <tr class="hover:bg-bg-elevated transition-base group">
+                                <td class="py-2.5 pl-4 pr-2"><input type="checkbox" class="rounded"></td>
+                                <td class="py-2.5 px-2 text-text-primary font-medium cursor-pointer hover:text-accent" onclick="openTaskDrawer()">${task.title}</td>
+                                <td class="py-2.5 px-2"><div class="flex items-center space-x-1.5"><img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${task.assignee}"><span class="text-text-secondary">${task.assignee}</span></div></td>
+                                <td class="py-2.5 px-2">
+                                    <select onchange="updateTaskStatus('${task.id}', this.value)" class="bg-transparent text-text-secondary text-xs border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm cursor-pointer hover:text-text-primary">
+                                        <option ${task.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                                        <option ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                        <option ${task.status === 'Blocked' ? 'selected' : ''}>Blocked</option>
+                                        <option ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                                    </select>
+                                </td>
+                                <td class="py-2.5 px-2"><span class="badge ${getBadgeClass('priority', task.priority)}">${task.priority}</span></td>
+                                <td class="py-2.5 px-2 text-text-secondary">${task.dueDate}</td>
+                                <td class="py-2.5 pr-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="openDeleteModal('${task.id}')" class="text-text-muted hover:text-danger px-1" aria-label="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        projectBody.innerHTML += row;
                     });
                 }
             }
-        }
-
-        // Helper to generate row HTML, mimicking a React sub-component
-        function createTaskRowHTML(task, isProjectView = false) {
-            const assigneeImg = `https://i.pravatar.cc/20?img=${task.assignee === 'Alex K.' ? 3 : task.assignee === 'Sarah J.' ? 5 : task.assignee === 'Mark T.' ? 8 : 16}`;
-            const subtaskBadge = task.subtasks && task.subtasks.length > 0 
-                ? `<span class="ml-2 text-[9px] text-text-muted bg-bg-muted px-1 py-0.5 rounded-sm inline-flex items-center" title="${task.subtasks.length} subtasks"><i class="fa-solid fa-list-ul mr-1 text-[8px]"></i>${task.subtasks.length}</span>` 
-                : '';
-            
-            const projectCell = isProjectView ? '' : `<td class="py-2.5 px-2 text-text-secondary">${task.project}</td>`;
-            const colspan = isProjectView ? 7 : 8;
-
-            return `
-                <tr class="hover:bg-bg-elevated transition-base group">
-                    <td class="py-2.5 pl-4 pr-2"><input type="checkbox" class="rounded"></td>
-                    <td class="py-2.5 px-2 text-text-primary font-medium cursor-pointer hover:text-accent flex items-center" onclick="openTaskDrawer()">
-                        ${task.title} ${subtaskBadge}
-                    </td>
-                    ${projectCell}
-                    <td class="py-2.5 px-2">
-                        <div class="flex items-center space-x-1.5">
-                            <img src="${assigneeImg}" class="w-4 h-4 rounded-full" alt="${task.assignee}">
-                            <span class="text-text-secondary">${task.assignee}</span>
-                        </div>
-                    </td>
-                    <td class="py-2.5 px-2">
-                        <select onchange="updateTaskStatus('${task.id}', this.value)" class="bg-transparent text-text-secondary text-xs border-none focus:outline-none focus:ring-1 focus:ring-accent rounded-sm cursor-pointer hover:text-text-primary">
-                            <option ${task.status === 'To Do' ? 'selected' : ''}>To Do</option>
-                            <option ${task.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                            <option ${task.status === 'Blocked' ? 'selected' : ''}>Blocked</option>
-                            <option ${task.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                        </select>
-                    </td>
-                    <td class="py-2.5 px-2"><span class="badge ${getBadgeClass('priority', task.priority)}">${task.priority}</span></td>
-                    <td class="py-2.5 px-2 text-text-secondary">${task.dueDate}</td>
-                    <td class="py-2.5 pr-4 text-right">
-                        <div class="flex items-center justify-end space-x-1 opacity-50 group-hover:opacity-100 transition-opacity">
-                            <button onclick="openTaskDrawer()" class="action-btn" title="View/Edit"><i class="fa-solid fa-eye text-[10px]"></i></button>
-                            <button onclick="showToast('Edit mode coming soon', 'info')" class="action-btn" title="Quick Edit"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                            <button onclick="openDeleteModal('${task.id}')" class="action-btn danger" title="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            `;
         }
 
         function updateTaskStatus(id, newStatus) {
@@ -1790,7 +1669,7 @@
             if (task) {
                 task.status = newStatus;
                 showToast(`Task status updated to "${newStatus}"`, 'info');
-                renderTasks(); 
+                renderTasks(); // Re-render to reflect badge changes if any
             }
         }
 
@@ -1833,8 +1712,10 @@
             
             container.appendChild(toast);
             
+            // Animate in
             setTimeout(() => toast.classList.add('show'), 10);
             
+            // Animate out and remove
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
